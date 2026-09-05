@@ -1,6 +1,5 @@
-// src/screens/SpellingScreen.jsx
 import { useState, useEffect, useRef, useMemo } from "react";
-import { ChevronLeft, Volume2, Zap, RotateCcw, Shuffle, Check, X } from "lucide-react";
+import { Volume2, Zap, RotateCcw, Shuffle, Check, X } from "lucide-react";
 import Header from "@/components/ui/Header";
 
 /**
@@ -45,6 +44,7 @@ export default function SpellingScreen({
     const [streak, setStreak] = useState(0);
     const [totalCorrect, setTotalCorrect] = useState(0);
     const [earnedXP, setEarnedXP] = useState(0);
+    const [lastXPGain, setLastXPGain] = useState(15);
 
     const inputRef = useRef(null);
     const earnedXPRef = useRef(0);
@@ -96,11 +96,13 @@ export default function SpellingScreen({
 
         if (userAnswer === correctAnswer) {
             setResult("correct");
-            setStreak((s) => s + 1);
+            const newStreak = streak + 1;
+            setStreak(newStreak);
             setTotalCorrect((c) => c + 1);
 
             // XP: Base 15 + streak bonus (max 10)
-            const xpGain = 15 + Math.min(streak * 2, 10);
+            const xpGain = 15 + Math.min((newStreak - 1) * 2, 10);
+            setLastXPGain(xpGain);
             earnedXPRef.current += xpGain;
             setEarnedXP(earnedXPRef.current);
 
@@ -199,7 +201,7 @@ export default function SpellingScreen({
             {/* Header */}
             <Header
                 title="Spelling"
-                subtitle={`${selectedChar.name} · ${wordIndex + 1}/${totalWords}`}
+                subtitle={`${selectedChar?.name || "Hero"} · ${wordIndex + 1}/${totalWords}`}
                 showBack
                 onBack={handleBack}
             />
@@ -296,7 +298,7 @@ export default function SpellingScreen({
                 {result === "correct" && (
                     <div className="flex items-center gap-2 text-emerald-400 animate-scale-in">
                         <Check size={24} />
-                        <span className="font-bold">Correct! +{15 + Math.min((streak - 1) * 2, 10)} XP</span>
+                        <span className="font-bold">Correct! +{lastXPGain} XP</span>
                     </div>
                 )}
 

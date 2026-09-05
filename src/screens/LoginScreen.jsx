@@ -1,5 +1,4 @@
-// src/screens/LoginScreen.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Gamepad2, ChevronLeft, Loader2 } from "lucide-react";
 import { apiForgotPassword } from "../api";
 

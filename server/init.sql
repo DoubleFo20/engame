@@ -11,9 +11,11 @@ CREATE TABLE `users` (
   `username` VARCHAR(50) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(255) DEFAULT NULL,
   `xp` INT NOT NULL DEFAULT 0,
   `rank` VARCHAR(50) DEFAULT 'Bronze III',
   `role` ENUM('guest','admin') NOT NULL DEFAULT 'guest',
+  `is_blocked` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -49,14 +51,25 @@ CREATE TABLE `user_vocab` (
   UNIQUE KEY `unique_user_hotspot` (`user_id`, `hotspot_id`)
 ) ENGINE=InnoDB;
 
+-- ===== ACTIVITY_LOGS =====
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `action` VARCHAR(50) NOT NULL COMMENT 'login, logout, view_character, play_game, etc.',
+  `details` VARCHAR(255) DEFAULT NULL,
+  `ip_address` VARCHAR(45) DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- =============================================
 -- SEED DATA
 -- =============================================
 
 -- Users (password = bcrypt hash of "123")
-INSERT INTO `users` (`username`, `password`, `name`, `xp`, `rank`, `role`) VALUES
-('player', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Player 1', 0, 'Silver II', 'guest'),
-('admin', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Admin GM', 99999, 'Conqueror', 'admin');
+INSERT INTO `users` (`username`, `password`, `name`, `email`, `xp`, `rank`, `role`, `is_blocked`) VALUES
+('player', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Player 1', 'player@engame.local', 0, 'Silver II', 'guest', 0),
+('admin', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Admin GM', 'admin@engame.local', 99999, 'Conqueror', 'admin', 0);
 
 -- Characters
 INSERT INTO `characters` (`id`, `name`, `role`, `img`, `color`) VALUES

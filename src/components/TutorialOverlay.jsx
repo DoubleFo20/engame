@@ -1,5 +1,4 @@
-// src/components/TutorialOverlay.jsx — Onboarding Tutorial for New Players
-import React, { useState } from "react";
+import { useState } from "react";
 import { ChevronRight, ChevronLeft, Gamepad2, Target, BookOpen, Trophy, Sparkles } from "lucide-react";
 
 const SLIDES = [

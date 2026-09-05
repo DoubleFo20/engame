@@ -4,7 +4,7 @@ export const CHARACTERS = [
     id: 1, 
     name: 'Violet', 
     role: 'Carry', 
-    img: '/characters/violet_full.png',
+    img: './characters/violet_full.png',
     color: 'purple',
     hotspots: [
       { id: 101, x: 80, y: 55, word: 'Pistol', mean: 'ปืนพก', type: 'Weapon' },
@@ -19,7 +19,7 @@ export const CHARACTERS = [
     id: 2, 
     name: 'Butterfly', 
     role: 'Assassin', 
-    img: '/characters/Butterfly_full.png',
+    img: './characters/Butterfly_full.png',
     color: 'pink',
     hotspots: [
       { id: 201, x: 20, y: 40, word: 'Broadsword', mean: 'ดาบใหญ่', type: 'Weapon' },
@@ -35,7 +35,7 @@ export const CHARACTERS = [
     id: 3, 
     name: 'Thane', 
     role: 'Tank', 
-    img: '/characters/Thane_full.png',
+    img: './characters/Thane_full.png',
     color: 'blue',
     hotspots: [
       { id: 301, x: 20, y: 50, word: 'Shield', mean: 'โล่', type: 'Defense' },
@@ -48,9 +48,9 @@ export const CHARACTERS = [
   },
   { 
     id: 4, 
-    name: 'Keixi', 
+    name: 'Krixi', 
     role: 'Mage', 
-    img: '/characters/Krixi_full.png',
+    img: './characters/Krixi_full.png',
     color: 'blue',
     hotspots: [
     { id: 401, x: 20, y: 30, word: 'Wings', mean: 'ปีก', type: 'Equipment' },
@@ -64,7 +64,7 @@ export const CHARACTERS = [
     id: 5, 
     name: 'Alice', 
     role: 'Support', 
-    img: '/characters/Alice_full.png',
+    img: './characters/Alice_full.png',
     color: 'blue',
     hotspots: [
       { id: 501, x: 17, y: 35, word: 'Staff', mean: 'คทา/ไม้เท้าเวทมนตร์', type: 'Weapon' },
@@ -78,7 +78,7 @@ export const CHARACTERS = [
   id: 6,
   name: 'Yena',
   role: 'Assassin',
-  img: '/characters/Yena_full.png',
+  img: './characters/Yena_full.png',
   color: 'blue',
   hotspots: [
     { id: 601, x: 8, y: 22, word: 'Blade', mean: 'ดาบ', type: 'Weapon' },

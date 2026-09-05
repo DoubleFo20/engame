@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import FeatureCard from "@/components/ui/FeatureCard";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import Header from "@/components/ui/Header";
 import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
@@ -9,7 +7,7 @@ import RegisterScreen from "@/screens/RegisterScreen";
 import FeatureView from "@/screens/FeatureView";
 import AdminScreen from "@/screens/AdminScreen";
 import TutorialOverlay from "@/components/TutorialOverlay";
-import usePlayerProgress from "@/hooks/userplayerProgress";
+import usePlayerProgress from "@/hooks/usePlayerProgress";
 
 // === Data imports (fallbacks) ===
 import { ROV_FEATURES } from "@/data/features";
@@ -36,7 +34,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
   // ===== XP / Level / Unlock — via custom hook =====
-  const { xp, level, progressPercent, unlocked, title, showLevelUp, addXP } =
+  const { xp, level, progressPercent, unlocked, showLevelUp, addXP } =
     usePlayerProgress(currentUser, setCurrentUser, setUsers);
 
   const [activeFeature, setActiveFeature] = useState(null);
@@ -53,9 +51,9 @@ function App() {
   useEffect(() => {
     if (selectedChar) {
       const updated = characters.find((c) => c.id === selectedChar.id);
-      if (updated) setSelectedChar(updated);
+      if (updated && updated !== selectedChar) setSelectedChar(updated);
     }
-  }, [characters]);
+  }, [characters, selectedChar]);
 
   // 🔐 Auto-login: โหลด user จาก localStorage + token
   useEffect(() => {
@@ -123,6 +121,16 @@ function App() {
       // Load all users from DB for admin panel
       reloadUsers();
     } catch (err) {
+      // Fallback for static hosts (e.g. GitHub Pages) or offline mode
+      const localUser = users.find(
+        (u) => u.username === username && u.password === password
+      );
+      if (localUser) {
+        console.warn("Backend unavailable, using local account:", err.message);
+        setCurrentUser(localUser);
+        setScreen("home");
+        return;
+      }
       alert(err.message || "Invalid username or password");
     }
   };
@@ -136,7 +144,21 @@ function App() {
       // Show tutorial for new users
       setShowTutorial(true);
     } catch (err) {
-      alert(err.message || "Registration failed");
+      // Fallback for static hosts (e.g. GitHub Pages)
+      console.warn("Backend unavailable, registering user in local state:", err.message);
+      const newUser = {
+        id: Date.now(),
+        username: userData.username,
+        password: userData.password,
+        name: userData.name || userData.username,
+        email: userData.email,
+        xp: 0,
+        role: "user",
+      };
+      setUsers((prev) => [...prev, newUser]);
+      setCurrentUser(newUser);
+      setScreen("home");
+      setShowTutorial(true);
     }
   };
 

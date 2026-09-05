@@ -31,7 +31,7 @@ function httpsPost(url, body) {
             res.on('end', () => {
                 try {
                     resolve({ status: res.statusCode, data: JSON.parse(data) });
-                } catch (e) {
+                } catch {
                     resolve({ status: res.statusCode, data: data });
                 }
             });
@@ -141,7 +141,7 @@ Respond with ONLY a valid JSON array, no markdown formatting, no explanation. Ex
         try {
             const cleaned = responseText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
             hotspots = JSON.parse(cleaned);
-        } catch (parseErr) {
+        } catch {
             console.error('[AI] Failed to parse Gemini response:', responseText);
             return res.status(502).json({ error: 'Failed to parse AI response', raw: responseText });
         }

@@ -1,5 +1,4 @@
-// src/screens/FlashcardsScreen.jsx
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Volume2, Plus, Check, Shuffle, RotateCcw } from "lucide-react";
 import Header from "@/components/ui/Header";
 
@@ -38,7 +37,6 @@ export default function FlashcardsScreen({
   setScreen,
   addToVocab,
   myVocab = [],
-  addXP,
   earnedXP = 0,
   setEarnedXP = () => { },
   cardIndex = 0,
@@ -79,7 +77,7 @@ export default function FlashcardsScreen({
       setShuffledCards(shuffleArray(selectedChar.hotspots));
       setCardIndex(0);
     }
-  }, [isShuffled, selectedChar]);
+  }, [isShuffled, selectedChar, setCardIndex]);
 
   // Handle navigation
   const goNext = () => {

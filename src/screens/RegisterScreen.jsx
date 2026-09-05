@@ -1,6 +1,5 @@
-// src/screens/RegisterScreen.jsx
-import React, { useState } from "react";
-import { ChevronLeft, UserPlus, Mail } from "lucide-react";
+import { useState } from "react";
+import { ChevronLeft, UserPlus } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 

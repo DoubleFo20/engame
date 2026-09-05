@@ -26,7 +26,7 @@ async function authMiddleware(req, res, next) {
 
         req.user = { ...decoded, role: rows[0].role }; // Use latest role from DB
         next();
-    } catch (err) {
+    } catch {
         return res.status(401).json({ error: 'Token expired or invalid' });
     }
 }

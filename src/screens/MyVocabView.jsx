@@ -1,5 +1,4 @@
-// src/screens/MyVocabView.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { BookOpen, Volume2, Trash2, X } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";

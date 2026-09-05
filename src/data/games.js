@@ -8,7 +8,7 @@ export const GAMES = [
         subtitle: "Learn English with ROV",
         color: "from-yellow-600 to-yellow-800",
         active: true,
-        logo: "/games/rov.png",
+        logo: "./games/rov.png",
     },
     {
         id: "mlbb",

@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/* ===== Fonts & Typography ===== */
+:root {
+    --font-thai: 'Kanit', 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: 'Inter', 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+}
+
+.font-thai {
+    font-family: var(--font-thai);
+}
+
+/* Custom scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 /* ===== 3D Flip Card Utilities (not built-in to Tailwind v4) ===== */
 
 /* Parent wrapper: creates 3D perspective space */

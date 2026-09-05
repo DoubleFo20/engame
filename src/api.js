@@ -1,5 +1,5 @@
 // src/api.js — API client for Engame Backend
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
 
 // Token management
 let token = localStorage.getItem('engame_token') || null;
@@ -23,8 +23,9 @@ async function request(path, options = {}) {
     const data = await res.json();
 
     // Auto-logout if user is blocked
-    if (res.status === 403 && data.error && data.error.includes('blocked')) {
+    if (res.status === 403 && data.error && (data.error.includes('blocked') || data.error.includes('ระงับ'))) {
         setToken(null);
+        localStorage.removeItem('engame_currentUser');
         localStorage.removeItem('engame_user');
         alert(data.error);
         window.location.reload();

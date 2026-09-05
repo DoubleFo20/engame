@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   ChevronLeft, Users, BarChart3, BookOpen, Trash2, Plus,
   Edit3, Save, Search, X, UserCog, ImagePlus, Eye, Move, Sparkles, Loader2,
-  Activity, KeyRound, Clock, Shield,
+  Activity, KeyRound, Clock,
 } from "lucide-react";
 import {
   apiAddCharacter, apiUpdateCharacter, apiDeleteCharacter,
@@ -52,6 +52,7 @@ function UsersTab({ users, onDeleteUser, onUpdateUser, onReloadUsers }) {
     if (!confirm(`Block user "${user.name || user.username}"? (ผู้ใช้จะเข้าสู่ระบบไม่ได้ แต่ข้อมูลยังอยู่ในฐานข้อมูล)`)) return;
     try {
       await apiDeleteUser(user.id);
+      if (onDeleteUser) onDeleteUser(user.username);
       if (onReloadUsers) await onReloadUsers();
     } catch (err) {
       alert('Failed to block: ' + err.message);
@@ -164,9 +165,10 @@ function UsersTab({ users, onDeleteUser, onUpdateUser, onReloadUsers }) {
           <div className="flex gap-2">
             <button
               onClick={handleSaveUser}
-              className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1"
+              disabled={saving}
+              className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1"
             >
-              <Save size={12} /> Save Changes
+              <Save size={12} /> {saving ? "Saving..." : "Save Changes"}
             </button>
             <button
               onClick={() => setEditingUser(null)}
@@ -397,7 +399,7 @@ function StatsTab({ users, characters }) {
 }
 
 // ===== Hotspot Preview Popup =====
-function HotspotPreviewPopup({ character, hotspot, allHotspots, onChangePosition, onClose, onSave, saving }) {
+function HotspotPreviewPopup({ character, hotspot, allHotspots, onClose, onSave, saving }) {
   const imgRef = useRef(null);
   const [editData, setEditData] = useState({ ...hotspot });
   const [isDragging, setIsDragging] = useState(false);
@@ -570,7 +572,7 @@ function HotspotPreviewPopup({ character, hotspot, allHotspots, onChangePosition
 }
 
 // ===== Tab 3: Content Management =====
-function ContentTab({ characters, onUpdateCharacters, onReloadCharacters }) {
+function ContentTab({ characters, onReloadCharacters }) {
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [editingWord, setEditingWord] = useState(null);
   const [showAddWord, setShowAddWord] = useState(false);
@@ -580,7 +582,6 @@ function ContentTab({ characters, onUpdateCharacters, onReloadCharacters }) {
   const [editingChar, setEditingChar] = useState(null);
   const [saving, setSaving] = useState(false);
   const [previewPopup, setPreviewPopup] = useState(null); // { mode: 'edit'|'add'|'preview', hotspot, character }
-  const [addWordPreview, setAddWordPreview] = useState(false);
   const [aiGenerating, setAiGenerating] = useState(false);
 
   const selectedChar = characters.find((c) => c.id === selectedCharId);
@@ -701,7 +702,7 @@ function ContentTab({ characters, onUpdateCharacters, onReloadCharacters }) {
       await apiAddCharacter({
         name: newChar.name.trim(),
         role: newChar.role.trim(),
-        img: newChar.img.trim() || "/characters/default.png",
+        img: newChar.img.trim() || "./characters/default.png",
       });
       await onReloadCharacters();
       setNewChar({ name: "", role: "", img: "" });
@@ -733,7 +734,7 @@ function ContentTab({ characters, onUpdateCharacters, onReloadCharacters }) {
       await apiUpdateCharacter(editingChar.id, {
         name: editingChar.name.trim(),
         role: editingChar.role.trim(),
-        img: editingChar.img.trim() || "/characters/default.png",
+        img: editingChar.img.trim() || "./characters/default.png",
         color: editingChar.color || "blue",
       });
       await onReloadCharacters();
@@ -818,7 +819,7 @@ function ContentTab({ characters, onUpdateCharacters, onReloadCharacters }) {
                 {/* Image Preview */}
                 <div className="flex items-center gap-3">
                   <img
-                    src={editingChar.img || "/characters/default.png"}
+                    src={editingChar.img || "./characters/default.png"}
                     alt="preview"
                     className="w-16 h-16 rounded-lg object-cover bg-slate-700 border border-slate-600"
                   />
@@ -1201,13 +1202,13 @@ const TABS = [
   { id: "logs", label: "Logs", icon: Activity },
 ];
 
-export default function AdminScreen({ users, characters, onBack, onDeleteUser, onUpdateUser, onUpdateCharacters, onReloadCharacters, onReloadUsers }) {
+export default function AdminScreen({ users, characters, onBack, onDeleteUser, onUpdateUser, onReloadCharacters, onReloadUsers }) {
   const [activeTab, setActiveTab] = useState("users");
 
   // Reload users from DB when entering admin panel
   React.useEffect(() => {
     if (onReloadUsers) onReloadUsers();
-  }, []);
+  }, [onReloadUsers]);
 
   return (
     <div className="h-full flex flex-col bg-slate-950 animate-fade-in">
@@ -1266,7 +1267,7 @@ export default function AdminScreen({ users, characters, onBack, onDeleteUser, o
         )}
         {activeTab === "stats" && <StatsTab users={users} characters={characters} />}
         {activeTab === "content" && (
-          <ContentTab characters={characters} onUpdateCharacters={onUpdateCharacters} onReloadCharacters={onReloadCharacters} />
+          <ContentTab characters={characters} onReloadCharacters={onReloadCharacters} />
         )}
         {activeTab === "logs" && <ActivityLogsTab />}
       </div>

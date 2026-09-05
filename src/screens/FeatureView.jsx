@@ -1,6 +1,5 @@
-// src/screens/FeatureView.jsx
-import React, { useState, useEffect } from "react";
-import { Volume2, Plus, X, Settings, HelpCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Volume2, Plus, X, Settings } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";
 import FlashcardsScreen from "@/screens/FlashcardsScreen";
@@ -29,17 +28,26 @@ export default function FeatureView({
 }) {
   // ✅ All hooks declared at top level (React Rules of Hooks)
   const [activeSpot, setActiveSpot] = useState(null);
-  const [flashcardFlip, setFlashcardFlip] = useState(false);
 
   // Reset state when switching features
   useEffect(() => {
     setActiveSpot(null);
-    setFlashcardIndex(0); // Fix: Reset the actual global flashcard index
-    setFlashcardFlip(false);
-  }, [activeFeature]);
+    if (setFlashcardIndex) setFlashcardIndex(0);
+  }, [activeFeature, setFlashcardIndex]);
+
+  // Guard for character-dependent features
+  if (["hotspots", "flashcards", "quiz", "spelling", "speaking", "roleplay"].includes(activeFeature) && !selectedChar) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-slate-950 text-center p-6">
+        <p className="text-slate-400 mb-4">No hero selected.</p>
+        <Button onClick={() => setScreen("char-select")}>Select a Hero</Button>
+      </div>
+    );
+  }
 
   // Hotspots
   if (activeFeature === "hotspots") {
+    const hotspots = selectedChar.hotspots || [];
     return (
       <div className="h-full flex flex-col relative">
         <Header
@@ -58,9 +66,10 @@ export default function FeatureView({
         <div className="flex-1 relative bg-slate-900 flex items-center justify-center overflow-hidden">
           <img
             src={selectedChar.img}
+            alt={selectedChar.name}
             className="w-full h-full object-cover opacity-60"
           />
-          {selectedChar.hotspots.map((hs) => (
+          {hotspots.map((hs) => (
             <button
               key={hs.id}
               style={{ left: `${hs.x}%`, top: `${hs.y}%` }}

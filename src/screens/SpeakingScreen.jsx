@@ -71,6 +71,7 @@ export default function SpeakingScreen({
     // Stats
     const [totalCorrect, setTotalCorrect] = useState(0);
     const [earnedXP, setEarnedXP] = useState(0);
+    const [scoredWords, setScoredWords] = useState(new Set());
     const earnedXPRef = useRef(0);
 
     const recognitionRef = useRef(null);
@@ -130,12 +131,16 @@ export default function SpeakingScreen({
             const checkResult = checkPronunciation(spoken, currentWord.word);
             setResult(checkResult);
 
-            // Award XP based on score
+            // Award XP based on score (only once per word)
             if (checkResult.score >= 70) {
-                const xpGain = Math.floor(checkResult.score / 5); // 14-20 XP
-                earnedXPRef.current += xpGain;
-                setEarnedXP(earnedXPRef.current);
-                setTotalCorrect((c) => c + 1);
+                const wordKey = currentWord?.id || currentWord?.word;
+                if (!scoredWords.has(wordKey)) {
+                    const xpGain = Math.floor(checkResult.score / 5); // 14-20 XP
+                    earnedXPRef.current += xpGain;
+                    setEarnedXP(earnedXPRef.current);
+                    setTotalCorrect((c) => c + 1);
+                    setScoredWords((prev) => new Set(prev).add(wordKey));
+                }
             }
         };
 
@@ -254,7 +259,7 @@ export default function SpeakingScreen({
             {/* Header */}
             <Header
                 title="Speaking"
-                subtitle={`${selectedChar.name} · ${wordIndex + 1}/${totalWords}`}
+                subtitle={`${selectedChar?.name || "Hero"} · ${wordIndex + 1}/${totalWords}`}
                 showBack
                 onBack={handleBack}
             />
@@ -336,7 +341,7 @@ export default function SpeakingScreen({
                     <div className="w-full max-w-sm text-center">
                         <p className="text-sm text-slate-300 mb-1">You said:</p>
                         <p className={`text-lg font-bold ${getResultColor()}`}>
-                            "{spokenText}"
+                            &ldquo;{spokenText}&rdquo;
                         </p>
                     </div>
                 )}

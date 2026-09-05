@@ -1,6 +1,5 @@
-// src/screens/RoleplayScreen.jsx
-import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, Send, Volume2, MessageCircle, User } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Volume2, MessageCircle, User } from "lucide-react";
 import Header from "@/components/ui/Header";
 
 /**
@@ -242,7 +241,6 @@ export default function RoleplayScreen({
     const [dialogues, setDialogues] = useState([]);
     const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
     const [messages, setMessages] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(null);
     const [showOptions, setShowOptions] = useState(false);
     const [totalXP, setTotalXP] = useState(0);
     const [isComplete, setIsComplete] = useState(false);
@@ -251,32 +249,8 @@ export default function RoleplayScreen({
     const totalXPRef = useRef(0);
     const hasInitializedRef = useRef(false);
 
-    // Initialize dialogues (only once)
-    useEffect(() => {
-        if (selectedChar && !hasInitializedRef.current) {
-            hasInitializedRef.current = true;
-            const generatedDialogues = generateDialogues(selectedChar);
-            setDialogues(generatedDialogues);
-
-            // Start first dialogue after short delay
-            if (generatedDialogues.length > 0) {
-                setTimeout(() => {
-                    addNPCMessage(generatedDialogues[0]);
-                }, 500);
-            }
-        }
-    }, [selectedChar]);
-
-    // Scroll to bottom when messages change (with delay to prevent locking)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [messages]);
-
     // Add NPC message to chat
-    const addNPCMessage = (dialogue) => {
+    const addNPCMessage = useCallback((dialogue) => {
         setMessages((prev) => [
             ...prev,
             {
@@ -291,11 +265,35 @@ export default function RoleplayScreen({
         setTimeout(() => {
             setShowOptions(true);
         }, 800);
-    };
+    }, [selectedChar?.img]);
+
+    // Initialize dialogues (only once)
+    useEffect(() => {
+        if (selectedChar && !hasInitializedRef.current) {
+            hasInitializedRef.current = true;
+            const generatedDialogues = generateDialogues(selectedChar);
+            setDialogues(generatedDialogues);
+
+            // Start first dialogue after short delay
+            if (generatedDialogues.length > 0) {
+                const timer = setTimeout(() => {
+                    addNPCMessage(generatedDialogues[0]);
+                }, 500);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [selectedChar, addNPCMessage]);
+
+    // Scroll to bottom when messages change (with delay to prevent locking)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [messages]);
 
     // Handle option selection
     const handleOptionSelect = (option, dialogueIndex) => {
-        setSelectedOption(option);
         setShowOptions(false);
 
         // Add user message
@@ -349,7 +347,6 @@ export default function RoleplayScreen({
                         },
                     ]);
                 }
-                setSelectedOption(null);
             }, 1000);
         }, 600);
     };
@@ -386,7 +383,7 @@ export default function RoleplayScreen({
             {/* Header */}
             <Header
                 title="Role-play"
-                subtitle={`Chat with ${selectedChar.name}`}
+                subtitle={`Chat with ${selectedChar?.name || "Hero"}`}
                 showBack
                 onBack={handleBack}
             />

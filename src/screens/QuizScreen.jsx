@@ -1,9 +1,9 @@
-// src/screens/QuizScreen.jsx
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { CHARACTERS } from "@/data/characters";
 
 export default function QuizView({ selectedChar, onBack, addXP }) {
     // words = hotspot ทั้งหมดของ hero ที่เลือก
-    const words = selectedChar?.hotspots || [];
+    const words = useMemo(() => selectedChar?.hotspots || [], [selectedChar]);
 
     // index ของคำที่กำลังถามอยู่ตอนนี้
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -29,25 +29,35 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
 
     // เตรียมคำถามทุกครั้งที่เปลี่ยน questionIndex หรือ hero
     useEffect(() => {
-        if (words.length === 0) return;
+        if (!words || words.length === 0 || questionIndex >= words.length) return;
 
         const correct = words[questionIndex];
+        if (!correct) return;
 
         // ดึงคำอื่นมาเป็นตัวหลอก (wrong choices)
-        const otherWords = words.filter((w, i) => i !== questionIndex);
-        const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
+        const otherWords = words.filter((_, i) => i !== questionIndex);
+        let wrongOptions = [...otherWords].sort(() => Math.random() - 0.5);
+
+        // ถ้าคำใน hero นี้ไม่พอ 3 ตัวเลือก ให้ดึงจาก hero อื่นๆ
+        if (wrongOptions.length < 3) {
+            const fallbackWords = CHARACTERS
+                .flatMap((c) => c.hotspots || [])
+                .filter((h) => h.word !== correct.word && !wrongOptions.some((w) => w.word === h.word))
+                .sort(() => Math.random() - 0.5);
+            wrongOptions = [...wrongOptions, ...fallbackWords.slice(0, 3 - wrongOptions.length)];
+        }
 
         const optionList = [
             correct,
-            ...shuffled.slice(0, Math.max(0, 3 - 0)), // เอามาให้ครบ 4 ตัวเลือก
+            ...wrongOptions.slice(0, 3),
         ]
-            .slice(0, 4) // กันพลาดเกิน 4
-            .sort(() => Math.random() - 0.5); // สลับตำแหน่ง
+            .slice(0, 4)
+            .sort(() => Math.random() - 0.5);
 
         setChoices(optionList);
         setSelectedChoice(null);
         setResult(null);
-    }, [questionIndex, selectedChar]);
+    }, [questionIndex, selectedChar, words]);
 
     if (words.length === 0) {
         return (
@@ -97,7 +107,7 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
             <div className="h-full flex flex-col bg-slate-950 items-center justify-center text-center px-6 gap-4">
                 <div className="text-5xl">🏆</div>
                 <h2 className="text-2xl font-black text-white">Quiz Complete!</h2>
-                <p className="text-slate-400">Hero: {selectedChar.name}</p>
+                <p className="text-slate-400">Hero: {selectedChar?.name || "Hero"}</p>
                 <p className="text-lg text-emerald-400 font-bold">+{earnedXP} XP earned</p>
                 <p className="text-sm text-slate-500">{words.length} questions answered</p>
                 <button
@@ -121,7 +131,7 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
                     ←
                 </button>
                 <div className="text-right">
-                    <p className="text-xs text-slate-400">Quiz · {selectedChar.name}</p>
+                    <p className="text-xs text-slate-400">Quiz · {selectedChar?.name || "Hero"}</p>
                     <p className="text-[10px] text-slate-500">
                         Question {questionIndex + 1} / {words.length}
                         {earnedXP > 0 && (
@@ -137,13 +147,13 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
                     <p className="text-xs uppercase text-blue-300 tracking-wide mb-2">
                         What is the meaning of
                     </p>
-                    <h2 className="text-3xl font-black text-white">{current.word}</h2>
+                    <h2 className="text-3xl font-black text-white">{current?.word || ""}</h2>
                 </div>
 
                 <div className="w-full max-w-xs grid gap-3">
                     {choices.map((choice) => {
                         const isSelected = selectedChoice?.id === choice.id;
-                        const isCorrect = choice.id === current.id;
+                        const isCorrect = choice.id === current?.id;
 
                         let buttonStyle =
                             "w-full text-left px-4 py-3 rounded-xl border text-sm transition-all";
@@ -167,7 +177,7 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
 
                         return (
                             <button
-                                key={choice.id}
+                                key={choice.id || choice.word}
                                 onClick={() => !selectedChoice && handleSelect(choice)}
                                 className={buttonStyle}
                             >
@@ -195,9 +205,14 @@ export default function QuizView({ selectedChar, onBack, addXP }) {
             <div className="p-4 border-t border-slate-800">
                 <button
                     onClick={handleNext}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-sm"
+                    disabled={!selectedChoice}
+                    className={`w-full font-bold py-3 rounded-xl text-sm transition-all ${
+                        selectedChoice
+                            ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg"
+                            : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700"
+                    }`}
                 >
-                    Next Question
+                    {questionIndex + 1 >= words.length ? "Finish Quiz & View Results" : "Next Question"}
                 </button>
             </div>
         </div>

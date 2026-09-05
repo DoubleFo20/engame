@@ -1,5 +1,4 @@
-// src/screens/HomeScreen.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Swords, LogOut, Settings, BookOpen, KeyRound, X, Loader2 } from "lucide-react";
 import { GAMES } from "@/data/games";
 import { apiChangePassword } from "../api";
@@ -66,7 +65,7 @@ export default function HomeScreen({
     <div className="h-full flex flex-col animate-fade-in">
       <Header
         title="Dashboard"
-        subtitle={`Welcome, ${currentUser.name} · ${currentUser.xp} XP`}
+        subtitle={`Welcome, ${currentUser?.name || currentUser?.username || "Hero"} · ${currentUser?.xp ?? 0} XP`}
       />
 
       <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -114,7 +113,7 @@ export default function HomeScreen({
           ))}
         </div>
 
-        {currentUser.role === "admin" && (
+        {currentUser?.role === "admin" && (
           <Button
             variant="danger"
             className="mt-8 w-full"
