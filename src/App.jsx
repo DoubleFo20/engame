@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import FeatureCard from "@/components/ui/FeatureCard";
 import Header from "@/components/ui/Header";
 import LoginScreen from "@/screens/LoginScreen";
@@ -6,8 +6,14 @@ import HomeScreen from "@/screens/HomeScreen";
 import RegisterScreen from "@/screens/RegisterScreen";
 import FeatureView from "@/screens/FeatureView";
 import AdminScreen from "@/screens/AdminScreen";
+import HeroesScreen from "@/screens/HeroesScreen";
+import PracticeHub from "@/screens/PracticeHub";
+import ProfileScreen from "@/screens/ProfileScreen";
+import MyVocabView from "@/screens/MyVocabView";
+import BottomNavBar from "@/components/layout/BottomNavBar";
 import TutorialOverlay from "@/components/TutorialOverlay";
 import usePlayerProgress from "@/hooks/usePlayerProgress";
+import { Wifi, Battery, Signal } from "lucide-react";
 
 // === Data imports (fallbacks) ===
 import { ROV_FEATURES } from "@/data/features";
@@ -29,15 +35,39 @@ import {
 } from "@/api";
 
 function App() {
-  const [screen, setScreen] = useState("login");
+  const [screen, setScreen] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("engame_currentUser");
+      const savedToken = localStorage.getItem("engame_token");
+      if (savedUser && savedToken) {
+        JSON.parse(savedUser); // validate
+        return "home";
+      }
+    } catch { /* invalid data */ }
+    return "login";
+  });
   const [users, setUsers] = useState(INITIAL_USERS);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("engame_currentUser");
+      const savedToken = localStorage.getItem("engame_token");
+      if (savedUser && savedToken) {
+        setToken(savedToken);
+        return JSON.parse(savedUser);
+      }
+    } catch {
+      localStorage.removeItem("engame_currentUser");
+      localStorage.removeItem("engame_token");
+    }
+    return null;
+  });
 
   // ===== XP / Level / Unlock — via custom hook =====
   const { xp, level, progressPercent, unlocked, showLevelUp, addXP } =
     usePlayerProgress(currentUser, setCurrentUser, setUsers);
 
   const [activeFeature, setActiveFeature] = useState(null);
+  const [activeTab, setActiveTab] = useState("home");
   const [selectedChar, setSelectedChar] = useState(null);
   const [myVocab, setMyVocab] = useState([]);
   const [characters, setCharacters] = useState(INITIAL_CHARACTERS);
@@ -48,29 +78,12 @@ function App() {
   const [visibleCharsCount, setVisibleCharsCount] = useState(20);
 
   // ✅ Sync selectedChar เมื่อ characters state เปลี่ยน (เช่น Admin แก้ไขคำศัพท์)
-  useEffect(() => {
-    if (selectedChar) {
-      const updated = characters.find((c) => c.id === selectedChar.id);
-      if (updated && updated !== selectedChar) setSelectedChar(updated);
-    }
+  const resolvedSelectedChar = useMemo(() => {
+    if (!selectedChar) return null;
+    return characters.find((c) => c.id === selectedChar.id) || selectedChar;
   }, [characters, selectedChar]);
 
-  // 🔐 Auto-login: โหลด user จาก localStorage + token
-  useEffect(() => {
-    const savedUser = localStorage.getItem("engame_currentUser");
-    const savedToken = localStorage.getItem("engame_token");
-    if (savedUser && savedToken) {
-      try {
-        setCurrentUser(JSON.parse(savedUser));
-        setToken(savedToken);
-        setScreen("home");
-      } catch (e) {
-        console.error("Invalid localStorage data", e);
-        localStorage.removeItem("engame_currentUser");
-        localStorage.removeItem("engame_token");
-      }
-    }
-  }, []);
+  // 🔐 Auto-login: โหลด user จาก localStorage + token (initialized above via useState)
 
   // 💾 sync currentUser → localStorage ทุกครั้งที่เปลี่ยน
   useEffect(() => {
@@ -220,21 +233,70 @@ function App() {
   const render = () => {
     if (screen === "login") return <LoginScreen onLogin={handleLogin} onNavigateRegister={() => setScreen("register")} />;
     if (screen === "register") return <RegisterScreen onRegister={handleRegister} onNavigateLogin={() => setScreen("login")} />;
-    if (screen === "home") return (
-      <HomeScreen
-        currentUser={currentUser}
-        onSelectGame={(gameId) => gameId === "rov" ? setScreen("rov-hub") : alert("Coming Soon!")}
-        onNavigateAdmin={() => setScreen("admin")}
-        onShowTutorial={() => setShowTutorial(true)}
-        onLogout={() => {
-          apiLogout();
-          localStorage.removeItem("engame_currentUser");
-          setMyVocab([]);
-          setCurrentUser(null);
-          setScreen("login");
-        }}
-      />
-    );
+    if (screen === "home") {
+      return (
+        <div className="h-full flex flex-col flex-1 overflow-hidden bg-[#F8FAFC]">
+          <div className="flex-1 flex flex-col overflow-hidden relative">
+            {activeTab === "home" && (
+              <HomeScreen
+                currentUser={currentUser}
+                myVocab={myVocab}
+                onNavigateTab={(tab) => setActiveTab(tab)}
+                onStartPractice={(mode) => navigateToFeature(mode)}
+                onSelectHero={(hero) => {
+                  setSelectedChar(hero);
+                  setFlashcardIndex(0);
+                  setScreen("feature-view");
+                }}
+              />
+            )}
+            {activeTab === "heroes" && (
+              <HeroesScreen
+                characters={characters}
+                onSelectHero={(hero) => {
+                  setSelectedChar(hero);
+                  setFlashcardIndex(0);
+                  setScreen("feature-view");
+                }}
+              />
+            )}
+            {activeTab === "practice" && (
+              <PracticeHub onSelectMode={(mode) => navigateToFeature(mode)} />
+            )}
+            {activeTab === "vocab" && (
+              <MyVocabView
+                myVocab={myVocab}
+                removeFromVocab={removeFromVocab}
+                onBack={() => setActiveTab("home")}
+              />
+            )}
+            {activeTab === "profile" && (
+              <ProfileScreen
+                currentUser={currentUser}
+                level={level}
+                xp={xp}
+                progressPercent={progressPercent}
+                myVocabCount={myVocab.length}
+                onLogout={() => {
+                  apiLogout();
+                  localStorage.removeItem("engame_currentUser");
+                  setMyVocab([]);
+                  setCurrentUser(null);
+                  setScreen("login");
+                }}
+                onNavigateAdmin={() => setScreen("admin")}
+                onShowTutorial={() => setShowTutorial(true)}
+              />
+            )}
+          </div>
+          <BottomNavBar
+            activeTab={activeTab}
+            onSelectTab={setActiveTab}
+            vocabCount={myVocab.length}
+          />
+        </div>
+      );
+    }
     if (screen === "rov-hub")
       return (
         <div className="h-full flex flex-col animate-fade-in bg-slate-950">
@@ -372,7 +434,7 @@ function App() {
     if (screen === "feature-view") return (
       <FeatureView
         activeFeature={activeFeature}
-        selectedChar={selectedChar}
+        selectedChar={resolvedSelectedChar}
         setScreen={setScreen}
         addToVocab={addToVocab}
         removeFromVocab={removeFromVocab}
@@ -406,21 +468,24 @@ function App() {
         </div>
       )}
 
-      {/* ✅ Main App Container */}
-      <div className="min-h-screen bg-black text-slate-100 font-sans flex justify-center items-center">
-        <div
-          className="w-full max-w-md bg-slate-950 h-screen sm:h-[850px]
-                        sm:rounded-[2.5rem] sm:border-[8px] sm:border-slate-800
-                        shadow-2xl relative flex flex-col overflow-hidden ring-8 ring-black"
-        >
-          {/* Background glow */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute top-[-20%] left-[-20%] w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-[-20%] right-[-20%] w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
+      {/* ✅ Main App Container (Centered 430px iPhone 15 Frame) */}
+      <div className="min-h-screen bg-slate-100 text-slate-800 font-sans flex justify-center items-center sm:py-6 sm:px-4">
+        <div className="w-full max-w-[430px] bg-[#F8FAFC] h-screen sm:h-[880px] sm:max-h-[920px] sm:rounded-[3rem] sm:border-[8px] sm:border-slate-800 shadow-2xl relative flex flex-col overflow-hidden ring-1 ring-slate-300">
+          {/* iOS Dynamic Island & Status Bar */}
+          <div className="h-10 bg-white/90 backdrop-blur-md px-6 flex items-center justify-between text-xs font-semibold text-slate-800 select-none z-50 border-b border-slate-100 flex-shrink-0">
+            <span>9:41</span>
+            <div className="w-24 h-5 bg-slate-900 rounded-full flex items-center justify-center">
+              <span className="w-2.5 h-2.5 bg-blue-500/80 rounded-full blur-[1px]" />
+            </div>
+            <div className="flex items-center gap-1.5 text-slate-600">
+              <Signal size={12} />
+              <Wifi size={12} />
+              <Battery size={14} className="fill-slate-700" />
+            </div>
           </div>
 
           {/* App Content */}
-          <div className="relative z-10 flex-1 h-full">{render()}</div>
+          <div className="relative z-10 flex-1 h-full flex flex-col overflow-hidden">{render()}</div>
 
           {/* Tutorial Overlay */}
           {showTutorial && (
@@ -429,6 +494,7 @@ function App() {
             />
           )}
         </div>
+      </div>
 
         {/* Animations */}
         <style>{`
@@ -448,7 +514,6 @@ function App() {
           }
         `}
         </style>
-      </div>
     </>
   );
 }

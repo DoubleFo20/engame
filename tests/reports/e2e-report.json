@@ -1,0 +1,906 @@
+{
+  "timestamp": "2026-09-26T12:07:38.792Z",
+  "summary": {
+    "totalTests": 110,
+    "passed": 110,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 213.61,
+    "success": true
+  },
+  "tierBreakdown": {
+    "Tier 1": {
+      "total": 81,
+      "passed": 81,
+      "failed": 0
+    },
+    "Tier 2": {
+      "total": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    "Tier 3": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    "Tier 4": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "Tier 5": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    }
+  },
+  "milestoneBreakdown": {
+    "M2": {
+      "total": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "M1": {
+      "total": 30,
+      "passed": 30,
+      "failed": 0
+    },
+    "M3": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    }
+  },
+  "suites": [
+    {
+      "title": "Tier 1: R1-F1 Virtual Backend Storage Engine",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F1.1: Storage engine initializes isolated namespace keys",
+          "status": "passed",
+          "durationMs": 0.8,
+          "error": null
+        },
+        {
+          "title": "R1-F1.2: Pre-seeds default administrator and demo student accounts on first launch",
+          "status": "passed",
+          "durationMs": 0.33,
+          "error": null
+        },
+        {
+          "title": "R1-F1.3: Supports autonomous JSON serialization and retrieval",
+          "status": "passed",
+          "durationMs": 0.25,
+          "error": null
+        },
+        {
+          "title": "R1-F1.4: Handles non-existent keys by returning null safely without exception",
+          "status": "passed",
+          "durationMs": 0.14,
+          "error": null
+        },
+        {
+          "title": "R1-F1.5: Deleting keys removes them completely from the storage map",
+          "status": "passed",
+          "durationMs": 0.18,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R1-F2 User Authentication Lifecycle",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F2.1: Register creates a new student user and persists credentials",
+          "status": "passed",
+          "durationMs": 0.93,
+          "error": null
+        },
+        {
+          "title": "R1-F2.2: Register rejects duplicate usernames with error",
+          "status": "passed",
+          "durationMs": 1.52,
+          "error": null
+        },
+        {
+          "title": "R1-F2.3: Login validates username and issues active session token",
+          "status": "passed",
+          "durationMs": 0.61,
+          "error": null
+        },
+        {
+          "title": "R1-F2.4: Login rejects nonexistent users with explicit error",
+          "status": "passed",
+          "durationMs": 0.19,
+          "error": null
+        },
+        {
+          "title": "R1-F2.5: Forgot password updates password timestamp and returns success",
+          "status": "passed",
+          "durationMs": 0.41,
+          "error": null
+        },
+        {
+          "title": "R1-F2.6: Logout revokes session token and clears current user from storage",
+          "status": "passed",
+          "durationMs": 0.21,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R1-F3 Player Progression & Level Formula",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F3.1: Initial user starts at 0 XP and Level 1",
+          "status": "passed",
+          "durationMs": 0.2,
+          "error": null
+        },
+        {
+          "title": "R1-F3.2: Level conforms strictly to Math.floor(xp / 100) + 1 across intervals",
+          "status": "passed",
+          "durationMs": 0.21,
+          "error": null
+        },
+        {
+          "title": "R1-F3.3: Mode unlock thresholds (Quiz Lv5, Spelling Lv10, Speaking Lv15, Roleplay Lv20)",
+          "status": "passed",
+          "durationMs": 0.2,
+          "error": null
+        },
+        {
+          "title": "R1-F3.4: Rank title upgrades to Veteran at Level 20",
+          "status": "passed",
+          "durationMs": 0.07,
+          "error": null
+        },
+        {
+          "title": "R1-F3.5: addXP increments total XP and triggers level-up detection in storage backend",
+          "status": "passed",
+          "durationMs": 0.59,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R1-F4 Vocab Vault & Mastery",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F4.1: Saving a hotspot word stores it in the user collection",
+          "status": "passed",
+          "durationMs": 0.37,
+          "error": null
+        },
+        {
+          "title": "R1-F4.2: Toggling word mastery updates status",
+          "status": "passed",
+          "durationMs": 0.32,
+          "error": null
+        },
+        {
+          "title": "R1-F4.3: Removing a word deletes it from Vocab Vault",
+          "status": "passed",
+          "durationMs": 0.3,
+          "error": null
+        },
+        {
+          "title": "R1-F4.4: Prevents duplicate entries when saving identical hotspot multiple times",
+          "status": "passed",
+          "durationMs": 0.11,
+          "error": null
+        },
+        {
+          "title": "R1-F4.5: Saved vocab preserves full Thai meaning and word classification",
+          "status": "passed",
+          "durationMs": 0.12,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R1-F5 Admin Hotspots Management",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F5.1: Admin can add custom hotspot with valid coordinates and Thai mean",
+          "status": "passed",
+          "durationMs": 0.57,
+          "error": null
+        },
+        {
+          "title": "R1-F5.2: Reject hotspot addition with out-of-bounds coordinates (x > 100 or y < 0)",
+          "status": "passed",
+          "durationMs": 0.32,
+          "error": null
+        },
+        {
+          "title": "R1-F5.3: Reject hotspot addition without Thai translation",
+          "status": "passed",
+          "durationMs": 0.27,
+          "error": null
+        },
+        {
+          "title": "R1-F5.4: Delete custom hotspot removes item by ID",
+          "status": "passed",
+          "durationMs": 0.22,
+          "error": null
+        },
+        {
+          "title": "R1-F5.5: Hotspot ID follows (characterId * 100) convention",
+          "status": "passed",
+          "durationMs": 0.12,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R1-F6 Standalone & Zero-Network Transparency",
+      "tier": 1,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R1-F6.1: Detects GitHub Pages hostname environment (doublefo20.github.io)",
+          "status": "passed",
+          "durationMs": 0.06,
+          "error": null
+        },
+        {
+          "title": "R1-F6.2: In standalone mode, zero network fetch requests are dispatched",
+          "status": "passed",
+          "durationMs": 0.18,
+          "error": null
+        },
+        {
+          "title": "R1-F6.3: Operations complete without throwing window.alert dialogs or unhandled errors",
+          "status": "passed",
+          "durationMs": 0.11,
+          "error": null
+        },
+        {
+          "title": "R1-F6.4: Zero console errors logged during standalone initialization and data operations",
+          "status": "passed",
+          "durationMs": 0.08,
+          "error": null
+        },
+        {
+          "title": "R1-F6.5: Refreshing session re-reads persisted state seamlessly",
+          "status": "passed",
+          "durationMs": 0.1,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R2-F1 111 Hero Asset Mapping & Roster Completeness",
+      "tier": 1,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R2-F1.1: Exactly 111 character PNG assets exist in public/characters/",
+          "status": "passed",
+          "durationMs": 0.51,
+          "error": null
+        },
+        {
+          "title": "R2-F1.2: All 111 character PNG assets are non-empty and valid images (> 100KB)",
+          "status": "passed",
+          "durationMs": 9.21,
+          "error": null
+        },
+        {
+          "title": "R2-F1.3: src/data/characters.js exists and exports CHARACTERS array",
+          "status": "passed",
+          "durationMs": 4.75,
+          "error": null
+        },
+        {
+          "title": "R2-F1.4: Roster dataset contains exactly 111 heroes with contiguous IDs 1..111",
+          "status": "passed",
+          "durationMs": 4.54,
+          "error": null
+        },
+        {
+          "title": "R2-F1.5: Every hero img path matches ./characters/<Filename>.png and points to an existing file",
+          "status": "passed",
+          "durationMs": 11.97,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R2-F2 Hero Roles & Color Theme Distribution",
+      "tier": 1,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R2-F2.1: Every hero has a defined, non-empty role property",
+          "status": "passed",
+          "durationMs": 6.98,
+          "error": null
+        },
+        {
+          "title": "R2-F2.2: All hero roles belong to the standardized ROV role classification",
+          "status": "passed",
+          "durationMs": 7.42,
+          "error": null
+        },
+        {
+          "title": "R2-F2.3: Every hero has a valid color theme defined",
+          "status": "passed",
+          "durationMs": 7.53,
+          "error": null
+        },
+        {
+          "title": "R2-F2.4: Role distribution spans all 6 major ROV classes",
+          "status": "passed",
+          "durationMs": 5.1,
+          "error": null
+        },
+        {
+          "title": "R2-F2.5: Role filtering function partitions the roster correctly",
+          "status": "passed",
+          "durationMs": 5.09,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R2-F3 Rich Vocabulary Hotspots Quantity & Categories",
+      "tier": 1,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R2-F3.1: Every hero in the roster has a non-empty hotspots array",
+          "status": "passed",
+          "durationMs": 6.69,
+          "error": null
+        },
+        {
+          "title": "R2-F3.2: Every hero has between 4 and 6 vocabulary hotspots (4 <= n <= 6)",
+          "status": "passed",
+          "durationMs": 4.73,
+          "error": null
+        },
+        {
+          "title": "R2-F3.3: Total vocabulary hotspots count across full roster is >= 444",
+          "status": "passed",
+          "durationMs": 6.39,
+          "error": null
+        },
+        {
+          "title": "R2-F3.4: Hotspot types match recognized equipment and gear categories",
+          "status": "passed",
+          "durationMs": 8.55,
+          "error": null
+        },
+        {
+          "title": "R2-F3.5: Vocabulary category variety ensures diverse language learning",
+          "status": "passed",
+          "durationMs": 5.01,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R2-F4 Hotspot Coordinates & Metadata Integrity",
+      "tier": 1,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R2-F4.1: Hotspot x and y coordinates are percentages strictly within [0, 100]",
+          "status": "passed",
+          "durationMs": 8.48,
+          "error": null
+        },
+        {
+          "title": "R2-F4.2: Hotspot English words are non-empty strings",
+          "status": "passed",
+          "durationMs": 6.08,
+          "error": null
+        },
+        {
+          "title": "R2-F4.3: Hotspot mean fields contain non-empty Thai translations with Thai script",
+          "status": "passed",
+          "durationMs": 5.44,
+          "error": null
+        },
+        {
+          "title": "R2-F4.4: Hotspot IDs conform to (char.id * 100) + index deterministic scheme",
+          "status": "passed",
+          "durationMs": 7.04,
+          "error": null
+        },
+        {
+          "title": "R2-F4.5: Hotspot IDs within each hero are unique (no intra-hero duplicate hotspot IDs)",
+          "status": "passed",
+          "durationMs": 5.46,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R2-F5 SQL Seed Synchronization",
+      "tier": 1,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R2-F5.1: server/init.sql exists and contains characters table DDL",
+          "status": "passed",
+          "durationMs": 1.52,
+          "error": null
+        },
+        {
+          "title": "R2-F5.2: server/init.sql contains hotspots table DDL",
+          "status": "passed",
+          "durationMs": 2.04,
+          "error": null
+        },
+        {
+          "title": "R2-F5.3: server/init.sql includes INSERT statements for characters",
+          "status": "passed",
+          "durationMs": 2.49,
+          "error": null
+        },
+        {
+          "title": "R2-F5.4: server/init.sql includes INSERT statements for hotspots",
+          "status": "passed",
+          "durationMs": 1.41,
+          "error": null
+        },
+        {
+          "title": "R2-F5.5: server/init.sql preserves valid UTF-8 encoding for Thai translations without corruption",
+          "status": "passed",
+          "durationMs": 1.32,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R3-F1 430px Mobile-First Shell Architecture",
+      "tier": 1,
+      "milestone": "M3",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R3-F1.1: Mobile viewport shell container enforces 430px max width constraint",
+          "status": "passed",
+          "durationMs": 0.07,
+          "error": null
+        },
+        {
+          "title": "R3-F1.2: Shell centers horizontally on desktop over bg-slate-100 surface",
+          "status": "passed",
+          "durationMs": 0.04,
+          "error": null
+        },
+        {
+          "title": "R3-F1.3: Responsive layout spans 100% width on mobile viewports (w-full / max-w-full)",
+          "status": "passed",
+          "durationMs": 0.02,
+          "error": null
+        },
+        {
+          "title": "R3-F1.4: Screen containers prevent horizontal overflow (overflow-x-hidden)",
+          "status": "passed",
+          "durationMs": 0.03,
+          "error": null
+        },
+        {
+          "title": "R3-F1.5: Viewport height fills full device height (min-h-screen or h-screen)",
+          "status": "passed",
+          "durationMs": 0.03,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R3-F2 Enterprise Design System Tokens",
+      "tier": 1,
+      "milestone": "M3",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R3-F2.1: Primary brand color #2563EB (Electric/Royal Blue) is configured or applied",
+          "status": "passed",
+          "durationMs": 0.14,
+          "error": null
+        },
+        {
+          "title": "R3-F2.2: Background surface utilizes off-white / light slate (#F8FAFC / slate-50)",
+          "status": "passed",
+          "durationMs": 0.23,
+          "error": null
+        },
+        {
+          "title": "R3-F2.3: Cards utilize pure white background with rounded-2xl geometry and soft shadows",
+          "status": "passed",
+          "durationMs": 0.14,
+          "error": null
+        },
+        {
+          "title": "R3-F2.4: Status indicators adopt standard color coding (emerald, amber, rose)",
+          "status": "passed",
+          "durationMs": 0.18,
+          "error": null
+        },
+        {
+          "title": "R3-F2.5: Typography hierarchy applies Inter font or clean sans hierarchy",
+          "status": "passed",
+          "durationMs": 0.04,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R3-F3 Dashboard Header & Metric Stat Grid",
+      "tier": 1,
+      "milestone": "M3",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R3-F3.1: Header renders user avatar or avatar placeholder",
+          "status": "passed",
+          "durationMs": 0.07,
+          "error": null
+        },
+        {
+          "title": "R3-F3.2: Header renders user rank/level badge",
+          "status": "passed",
+          "durationMs": 0.06,
+          "error": null
+        },
+        {
+          "title": "R3-F3.3: Notification bell with active ping dot is present",
+          "status": "passed",
+          "durationMs": 0.04,
+          "error": null
+        },
+        {
+          "title": "R3-F3.4: 2x2 Metric Stat Grid renders 4 core learner metrics",
+          "status": "passed",
+          "durationMs": 0.05,
+          "error": null
+        },
+        {
+          "title": "R3-F3.5: Stat grid cards use responsive 2-column grid layout (grid-cols-2)",
+          "status": "passed",
+          "durationMs": 0.08,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R3-F4 Hero Highlight & Quick Actions",
+      "tier": 1,
+      "milestone": "M3",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R3-F4.1: Hero Highlight Banner card renders featured hero spotlight",
+          "status": "passed",
+          "durationMs": 0.05,
+          "error": null
+        },
+        {
+          "title": "R3-F4.2: Hero Highlight Banner includes practice Call-to-Action (CTA)",
+          "status": "passed",
+          "durationMs": 0.04,
+          "error": null
+        },
+        {
+          "title": "R3-F4.3: Quick Actions section provides multiple practice modes",
+          "status": "passed",
+          "durationMs": 0.04,
+          "error": null
+        },
+        {
+          "title": "R3-F4.4: Hotspot exploration is accessible from dashboard quick actions",
+          "status": "passed",
+          "durationMs": 0.03,
+          "error": null
+        },
+        {
+          "title": "R3-F4.5: Recent activity section presents learning history cards",
+          "status": "passed",
+          "durationMs": 0.03,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 1: R3-F5 Sticky 5-Tab Navigation & Sub-Screen Fitting",
+      "tier": 1,
+      "milestone": "M3",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "R3-F5.1: Navigation bar supports the 5 required app sections",
+          "status": "passed",
+          "durationMs": 0.92,
+          "error": null
+        },
+        {
+          "title": "R3-F5.2: Bottom navigation bar is fixed/sticky to bottom of viewport",
+          "status": "passed",
+          "durationMs": 0.09,
+          "error": null
+        },
+        {
+          "title": "R3-F5.3: Active navigation indicator displays distinct styling with primary blue #2563EB",
+          "status": "passed",
+          "durationMs": 0.12,
+          "error": null
+        },
+        {
+          "title": "R3-F5.4: Sub-screens are co-located in src/screens/ directory",
+          "status": "passed",
+          "durationMs": 0.33,
+          "error": null
+        },
+        {
+          "title": "R3-F5.5: Navigation state switches active screen view without page reload",
+          "status": "passed",
+          "durationMs": 0.05,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 2: Boundary & Corner Cases",
+      "tier": 2,
+      "milestone": null,
+      "passed": 11,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "Tier 2 - B01: Zero XP, empty vocab, and zero streak initialize cleanly without NaN",
+          "status": "passed",
+          "durationMs": 0.13,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B02: Boundary Hero ID 1 and ID 111 lookup and access work symmetrically",
+          "status": "passed",
+          "durationMs": 0.15,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B03: Hotspot coordinate boundaries [0, 100] are strictly validated",
+          "status": "passed",
+          "durationMs": 0.21,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B04: Storage quota exhaustion (QuotaExceededError) is caught without crashing host",
+          "status": "passed",
+          "durationMs": 0.2,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B05: Nested state structures survive serialization and reload with exact fidelity",
+          "status": "passed",
+          "durationMs": 0.19,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B06: Corrupted JSON in localStorage is recovered without crashing application",
+          "status": "passed",
+          "durationMs": 0.16,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B07: Blocked user account attempt throws and resets session state",
+          "status": "passed",
+          "durationMs": 0.24,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B08: Exact XP boundaries (99->100, 399->400, 899->900, 1899->1900)",
+          "status": "passed",
+          "durationMs": 0.16,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B09: Negative XP values are safely clamped to 0",
+          "status": "passed",
+          "durationMs": 0.05,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B10: Hero names with punctuation and Thai script preserve character integrity",
+          "status": "passed",
+          "durationMs": 0.5,
+          "error": null
+        },
+        {
+          "title": "Tier 2 - B11: Search query edge cases (blank string, leading/trailing whitespace, case-insensitivity)",
+          "status": "passed",
+          "durationMs": 0.27,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 3: Cross-Feature Combinations",
+      "tier": 3,
+      "milestone": null,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "Tier 3 - C01: Register -> Login -> Browse Hero 111 -> Save Hotspot -> Earn XP -> Verify Reload Persistence",
+          "status": "passed",
+          "durationMs": 0.38,
+          "error": null
+        },
+        {
+          "title": "Tier 3 - C02: Admin creates hotspot -> Student saves to Vocab -> Admin deletes hotspot -> Vocab integrity",
+          "status": "passed",
+          "durationMs": 0.37,
+          "error": null
+        },
+        {
+          "title": "Tier 3 - C03: Progression chain unlocks Quiz at Lv 5, Spelling at Lv 10, Veteran title at Lv 20",
+          "status": "passed",
+          "durationMs": 0.3,
+          "error": null
+        },
+        {
+          "title": "Tier 3 - C04: Role Filter -> Select Hero -> Practice Flashcards -> Mark Mastered -> Stat Sync",
+          "status": "passed",
+          "durationMs": 0.49,
+          "error": null
+        },
+        {
+          "title": "Tier 3 - C05: Transparent switch to Standalone mode with 0 network calls and state continuity",
+          "status": "passed",
+          "durationMs": 0.31,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 4: Real-World Application Scenarios",
+      "tier": 4,
+      "milestone": null,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "Tier 4 - S01: Student Study Flow (Register -> Explore Roster -> Save 5 Hotspots -> Practice -> Level Up -> Reload)",
+          "status": "passed",
+          "durationMs": 0.69,
+          "error": null
+        },
+        {
+          "title": "Tier 4 - S02: Admin Hero Management Flow (Login -> Audit Roster -> Add Custom Hotspot -> Update -> Unblock User -> Logout)",
+          "status": "passed",
+          "durationMs": 0.44,
+          "error": null
+        },
+        {
+          "title": "Tier 4 - S03: Offline Guest Flow (Static Hosting -> Zero Network Dispatches -> Autonomous CRUD -> State Retained)",
+          "status": "passed",
+          "durationMs": 0.26,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 5 (Adversarial): Milestone M1 Hardening & Boundary Stress",
+      "tier": 5,
+      "milestone": "M1",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "ADV-M1.1: 111 Character assets exact file presence and casing verification",
+          "status": "passed",
+          "durationMs": 0.76,
+          "error": null
+        },
+        {
+          "title": "ADV-M1.2: Strict uniqueness of all 111 hero names and sequential IDs",
+          "status": "passed",
+          "durationMs": 0.25,
+          "error": null
+        },
+        {
+          "title": "ADV-M1.3: Apostrophe heroes escaping and SQL parity (Azzen'Ka, D'Arcy, Eland'orr, Kil'Groth, Tel'Annas, Y'bneth)",
+          "status": "passed",
+          "durationMs": 2.06,
+          "error": null
+        },
+        {
+          "title": "ADV-M1.4: Strict boundary limits on all 569 hotspot coordinates ([0, 100])",
+          "status": "passed",
+          "durationMs": 1.93,
+          "error": null
+        },
+        {
+          "title": "ADV-M1.5: Bidirectional role compatibility for ROV filters",
+          "status": "passed",
+          "durationMs": 0.59,
+          "error": null
+        }
+      ]
+    },
+    {
+      "title": "Tier 5 (Adversarial): Milestone M2 Storage Engine Hardening",
+      "tier": 5,
+      "milestone": "M2",
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "title": "ADV-M2.1: Storage quota exhaustion (QuotaExceededError) triggers log pruning without unhandled crash",
+          "status": "passed",
+          "durationMs": 2.5,
+          "error": null
+        },
+        {
+          "title": "ADV-M2.2: Corrupted JSON strings in storage keys are self-healed and do not crash host",
+          "status": "passed",
+          "durationMs": 3.49,
+          "error": null
+        },
+        {
+          "title": "ADV-M2.3: Blocked accounts are rejected and active sessions are revoked immediately",
+          "status": "passed",
+          "durationMs": 6.08,
+          "error": null
+        },
+        {
+          "title": "ADV-M2.4: Zero fetch calls emitted across full API lifecycle in standalone mode",
+          "status": "passed",
+          "durationMs": 9.59,
+          "error": null
+        },
+        {
+          "title": "ADV-M2.5: Vocab saving is idempotent and coordinate boundaries [0, 100] are strictly enforced",
+          "status": "passed",
+          "durationMs": 14.28,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

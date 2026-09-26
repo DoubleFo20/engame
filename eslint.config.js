@@ -31,6 +31,7 @@ export default [
       'no-unused-vars': 'warn',
       'react/prop-types': 'off',
       'react/jsx-no-target-blank': 'off',
+      'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

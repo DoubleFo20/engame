@@ -1,12 +1,13 @@
 -- =============================================
--- Engame Database - Full Schema + Seed Data
+-- Engame Database - Full Schema + Seed Data (111 Heroes)
+-- Authoritative UTF-8 Schema with Complete 111 Heroes & Hotspots
 -- =============================================
 
 CREATE DATABASE IF NOT EXISTS `engame` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `engame`;
 
 -- ===== USERS =====
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `username` VARCHAR(50) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
@@ -17,19 +18,19 @@ CREATE TABLE `users` (
   `role` ENUM('guest','admin') NOT NULL DEFAULT 'guest',
   `is_blocked` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ===== CHARACTERS =====
-CREATE TABLE `characters` (
+CREATE TABLE IF NOT EXISTS `characters` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(50) NOT NULL,
   `role` VARCHAR(50) NOT NULL,
   `img` VARCHAR(255) NOT NULL,
   `color` VARCHAR(20) DEFAULT 'blue'
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ===== HOTSPOTS (vocab words on characters) =====
-CREATE TABLE `hotspots` (
+CREATE TABLE IF NOT EXISTS `hotspots` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `character_id` INT NOT NULL,
   `x` DECIMAL(5,2) NOT NULL,
@@ -38,10 +39,10 @@ CREATE TABLE `hotspots` (
   `mean` VARCHAR(100) NOT NULL,
   `type` VARCHAR(50) NOT NULL,
   FOREIGN KEY (`character_id`) REFERENCES `characters`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ===== USER_VOCAB (saved words per user) =====
-CREATE TABLE `user_vocab` (
+CREATE TABLE IF NOT EXISTS `user_vocab` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT NOT NULL,
   `hotspot_id` INT NOT NULL,
@@ -49,7 +50,7 @@ CREATE TABLE `user_vocab` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`hotspot_id`) REFERENCES `hotspots`(`id`) ON DELETE CASCADE,
   UNIQUE KEY `unique_user_hotspot` (`user_id`, `hotspot_id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ===== ACTIVITY_LOGS =====
 CREATE TABLE IF NOT EXISTS `activity_logs` (
@@ -60,75 +61,816 @@ CREATE TABLE IF NOT EXISTS `activity_logs` (
   `ip_address` VARCHAR(45) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
 -- SEED DATA
 -- =============================================
+
+-- Clear existing data if re-seeding
+DELETE FROM `user_vocab`;
+DELETE FROM `hotspots`;
+DELETE FROM `characters`;
+DELETE FROM `users`;
 
 -- Users (password = bcrypt hash of "123")
 INSERT INTO `users` (`username`, `password`, `name`, `email`, `xp`, `rank`, `role`, `is_blocked`) VALUES
 ('player', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Player 1', 'player@engame.local', 0, 'Silver II', 'guest', 0),
 ('admin', '$2a$10$xVqYLGEMC6oNExkQPL.dEurZIxnSfS3MkOYBwcFhR7ND1hVr4XZ4y', 'Admin GM', 'admin@engame.local', 99999, 'Conqueror', 'admin', 0);
 
--- Characters
+-- Characters (111 ROV Heroes)
 INSERT INTO `characters` (`id`, `name`, `role`, `img`, `color`) VALUES
-(1, 'Violet',    'Carry',    '/characters/violet_full.png',    'purple'),
-(2, 'Butterfly', 'Assassin', '/characters/Butterfly_full.png', 'pink'),
-(3, 'Thane',     'Tank',     '/characters/Thane_full.png',     'blue'),
-(4, 'Krixi',     'Mage',     '/characters/Krixi_full.png',     'blue'),
-(5, 'Alice',     'Support',  '/characters/Alice_full.png',     'blue'),
-(6, 'Yena',      'Assassin', '/characters/Yena_full.png',      'blue');
+(1, 'Violet', 'Carry / Marksman', './characters/violet_full.png', 'purple'),
+(2, 'Butterfly', 'Assassin', './characters/Butterfly_full.png', 'pink'),
+(3, 'Thane', 'Tank', './characters/Thane_full.png', 'blue'),
+(4, 'Krixi', 'Mage', './characters/Krixi_full.png', 'emerald'),
+(5, 'Alice', 'Support', './characters/Alice_full.png', 'amber'),
+(6, 'Yena', 'Warrior / Fighter', './characters/Yena_full.png', 'red'),
+(7, 'Airi', 'Assassin', './characters/Airi_full.png', 'blue'),
+(8, 'Aleister', 'Mage', './characters/Aleister_full.png', 'indigo'),
+(9, 'Allain', 'Warrior / Fighter', './characters/Allain_full.png', 'red'),
+(10, 'Amily', 'Warrior / Fighter', './characters/Amily_full.png', 'red'),
+(11, 'Annette', 'Support', './characters/Annette_full.png', 'cyan'),
+(12, 'Aoi', 'Assassin', './characters/Aoi_full.png', 'purple'),
+(13, 'Arduin', 'Tank', './characters/Arduin_full.png', 'slate'),
+(14, 'Arum', 'Tank', './characters/Arum_full.png', 'emerald'),
+(15, 'Astrid', 'Warrior / Fighter', './characters/Astrid_full.png', 'red'),
+(16, 'Ata', 'Tank', './characters/Ata_full.png', 'amber'),
+(17, 'Aya', 'Support', './characters/Aya_full.png', 'amber'),
+(18, 'Azzen''Ka', 'Mage', './characters/Azzen''Ka_full.png', 'amber'),
+(19, 'Baldum', 'Tank', './characters/Baldum_full.png', 'emerald'),
+(20, 'Bright', 'Warrior / Fighter', './characters/Bright_full.png', 'amber'),
+(21, 'Capheny', 'Carry / Marksman', './characters/Capheny_full.png', 'amber'),
+(22, 'Celica', 'Carry / Marksman', './characters/Celica_full.png', 'amber'),
+(23, 'Chaugnar', 'Tank', './characters/Chaugnar_full.png', 'blue'),
+(24, 'Cresht', 'Tank', './characters/Cresht_full.png', 'cyan'),
+(25, 'D''Arcy', 'Mage', './characters/D''Arcy_full.png', 'indigo'),
+(26, 'Dextra', 'Warrior / Fighter', './characters/Dextra_full.png', 'red'),
+(27, 'Diao Chan', 'Mage', './characters/Diao chan_full.png', 'cyan'),
+(28, 'Dirak', 'Mage', './characters/Dirak_full.png', 'blue'),
+(29, 'Eland''orr', 'Carry / Marksman', './characters/Eland''orr_full.png', 'emerald'),
+(30, 'Elsu', 'Carry / Marksman', './characters/Elsu_full.png', 'amber'),
+(31, 'Enzo', 'Assassin', './characters/Enzo_full.png', 'purple'),
+(32, 'Errol', 'Warrior / Fighter', './characters/Errol_full.png', 'red'),
+(33, 'Fennik', 'Carry / Marksman', './characters/Fennik_full.png', 'amber'),
+(34, 'Florentino', 'Warrior / Fighter', './characters/Florentino_full.png', 'purple'),
+(35, 'Gildur', 'Tank', './characters/Gildur_full.png', 'amber'),
+(36, 'Grakk', 'Tank', './characters/Grakk_full.png', 'slate'),
+(37, 'Hayate', 'Carry / Marksman', './characters/Hayate_full.png', 'purple'),
+(38, 'Iggy', 'Mage', './characters/Iggy_full.png', 'red'),
+(39, 'Ignis', 'Mage', './characters/Ignis_full.png', 'red'),
+(40, 'Ilumia', 'Mage', './characters/Illumia_full.png', 'amber'),
+(41, 'Ishar', 'Mage', './characters/Ishar_full.png', 'pink'),
+(42, 'Jinna', 'Mage', './characters/Jinna_full.png', 'amber'),
+(43, 'Kahlii', 'Mage', './characters/Kahlii_full.png', 'purple'),
+(44, 'Keera', 'Assassin', './characters/Keera_full.png', 'purple'),
+(45, 'Kil''Groth', 'Warrior / Fighter', './characters/Kil''Groth_full.png', 'cyan'),
+(46, 'Kriknak', 'Assassin', './characters/Kriknak_full.png', 'purple'),
+(47, 'Krizzix', 'Support', './characters/Krizzix_full.png', 'emerald'),
+(48, 'Lauriel', 'Mage', './characters/Lauriel_full.png', 'blue'),
+(49, 'Laville', 'Carry / Marksman', './characters/Laville_full.png', 'amber'),
+(50, 'Liliana', 'Mage', './characters/Liliana_full.png', 'pink'),
+(51, 'Lindis', 'Carry / Marksman', './characters/Lindis_full.png', 'indigo'),
+(52, 'Lorion', 'Mage', './characters/Lorion_full.png', 'purple'),
+(53, 'Lu Bu', 'Warrior / Fighter', './characters/Lu Bu_full.png', 'red'),
+(54, 'Lumburr', 'Tank', './characters/Lumburr_full.png', 'emerald'),
+(55, 'Maloch', 'Warrior / Fighter', './characters/Maloch_full.png', 'red'),
+(56, 'Marja', 'Mage', './characters/Marja_full.png', 'purple'),
+(57, 'Max', 'Tank', './characters/Max_full.png', 'amber'),
+(58, 'Mganga', 'Mage', './characters/Mganga_full.png', 'emerald'),
+(59, 'Mina', 'Tank', './characters/Mina_full.png', 'purple'),
+(60, 'Moren', 'Carry / Marksman', './characters/Moren_full.png', 'amber'),
+(61, 'Mortos', 'Warrior / Fighter', './characters/Mortos_full.png', 'blue'),
+(62, 'Murad', 'Assassin', './characters/Murad_full.png', 'amber'),
+(63, 'Nakroth', 'Assassin', './characters/Nakroth_full.png', 'purple'),
+(64, 'Natalya', 'Mage', './characters/Natalya_full.png', 'emerald'),
+(65, 'Omega', 'Tank', './characters/Omega_full.png', 'slate'),
+(66, 'Omen', 'Warrior / Fighter', './characters/Omen_full.png', 'red'),
+(67, 'Ormarr', 'Tank', './characters/Ormarr_full.png', 'amber'),
+(68, 'Paine', 'Assassin', './characters/Paine_full.png', 'purple'),
+(69, 'Preyta', 'Mage', './characters/Preyta_full.png', 'emerald'),
+(70, 'Qi', 'Warrior / Fighter', './characters/Qi_full.png', 'amber'),
+(71, 'Quillen', 'Assassin', './characters/Quillen_full.png', 'purple'),
+(72, 'Raz', 'Mage', './characters/Raz_full.png', 'red'),
+(73, 'Riktor', 'Warrior / Fighter', './characters/Riktor_full.png', 'red'),
+(74, 'Rouie', 'Support', './characters/Rouie_full.png', 'cyan'),
+(75, 'Rourke', 'Warrior / Fighter', './characters/Rourke_full.png', 'amber'),
+(76, 'Roxie', 'Tank', './characters/Roxie_full.png', 'amber'),
+(77, 'Ryoma', 'Warrior / Fighter', './characters/Ryoma_full.png', 'indigo'),
+(78, 'Sephera', 'Support', './characters/Sephera_full.png', 'cyan'),
+(79, 'Sinestrea', 'Assassin', './characters/Sinestrea_full.png', 'red'),
+(80, 'Skud', 'Tank', './characters/Skud_full.png', 'amber'),
+(81, 'Slimz', 'Carry / Marksman', './characters/Slimz_full.png', 'amber'),
+(82, 'Superman', 'Warrior / Fighter', './characters/Super man_full.png', 'blue'),
+(83, 'Taara', 'Tank', './characters/Taara_full.png', 'red'),
+(84, 'Tachi', 'Warrior / Fighter', './characters/Tachi_full.png', 'indigo'),
+(85, 'TeeMee', 'Support', './characters/Teemee_full.png', 'amber'),
+(86, 'Teeri', 'Carry / Marksman', './characters/Teeri_full.png', 'amber'),
+(87, 'Tel''Annas', 'Carry / Marksman', './characters/Tel''Annas_full.png', 'emerald'),
+(88, 'The Flash', 'Assassin', './characters/The flash_full.png', 'red'),
+(89, 'Thorne', 'Carry / Marksman', './characters/Thorne_full.png', 'purple'),
+(90, 'Toro', 'Tank', './characters/Toro_full.png', 'amber'),
+(91, 'Tulen', 'Mage', './characters/Tulen_full.png', 'blue'),
+(92, 'Valhein', 'Carry / Marksman', './characters/Valhein_full.png', 'amber'),
+(93, 'Veera', 'Mage', './characters/Veera_full.png', 'purple'),
+(94, 'Veres', 'Warrior / Fighter', './characters/Veres_full.png', 'red'),
+(95, 'Violet (Classic)', 'Carry / Marksman', './characters/violet_full1.png', 'purple'),
+(96, 'Volkath', 'Warrior / Fighter', './characters/Volkath_full.png', 'red'),
+(97, 'Wiro', 'Tank', './characters/Wiro_full.png', 'amber'),
+(98, 'Wisp', 'Carry / Marksman', './characters/Wisp_full.png', 'amber'),
+(99, 'Wonder Woman', 'Warrior / Fighter', './characters/Wonder Woman_full.png', 'red'),
+(100, 'Wukong', 'Assassin', './characters/WuKong_full.png', 'amber'),
+(101, 'Xeniel', 'Tank', './characters/Xeniel_full.png', 'blue'),
+(102, 'Yan', 'Warrior / Fighter', './characters/Yan_full.png', 'cyan'),
+(103, 'Y''bneth', 'Tank', './characters/Y''bneth_full.png', 'emerald'),
+(104, 'Yorn', 'Carry / Marksman', './characters/Yorn_full.png', 'amber'),
+(105, 'Yue', 'Mage', './characters/Yue_full.png', 'pink'),
+(106, 'Zanis', 'Warrior / Fighter', './characters/Zanis_full.png', 'blue'),
+(107, 'Zata', 'Mage', './characters/Zata_full.png', 'purple'),
+(108, 'Zephys', 'Warrior / Fighter', './characters/Zephys_full.png', 'blue'),
+(109, 'Zill', 'Assassin', './characters/Zill_full.png', 'cyan'),
+(110, 'Zip', 'Support', './characters/Zip_full.png', 'purple'),
+(111, 'Zuka', 'Warrior / Fighter', './characters/Zuka_full.png', 'emerald');
 
--- Hotspots: Violet
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(1, 80.00, 55.00, 'Pistol',        'ปืนพก',                'Weapon'),
-(1, 50.00, 28.00, 'Tactical Suit', 'ชุดปฏิบัติการ',         'Attire'),
-(1, 30.00, 45.00, 'Ammunition',    'กระสุน',               'Equipment'),
-(1, 15.00, 13.50, 'Shotgun',       'ลูกซอง (โหมดกลิ้ง)',    'Weapon'),
-(1, 50.00, 40.00, 'Belt',          'เข็มขัดอุปกรณ์',        'Accessory'),
-(1, 23.00, 90.00, 'Boots',         'รองเท้าบูทสนาม',       'Attire');
-
--- Hotspots: Butterfly
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(2, 20.00, 40.00, 'Broadsword',    'ดาบใหญ่',             'Weapon'),
-(2, 50.00, 23.00, 'Cape',          'ผ้าคลุม',             'Attire'),
-(2, 40.00, 78.00, 'Boots',         'รองเท้าบูท',          'Attire'),
-(2, 80.00, 20.00, 'Wing Ornament', 'ปีกประดับหลัง',        'Accessory'),
-(2, 73.00, 45.00, 'Wrist Guard',   'เกราะข้อมือ',          'Equipment'),
-(2, 45.00, 35.00, 'Armor Plate',   'ชิ้นเกราะหน้าอก',      'Defense'),
-(2, 65.00, 70.00, 'Shin Guard',    'สนับแข้ง',            'Armor');
-
--- Hotspots: Thane
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(3, 20.00, 50.00, 'Shield',         'โล่',                'Defense'),
-(3, 85.00, 55.00, 'Excalibur',      'ดาบศักดิ์สิทธิ์',      'Weapon'),
-(3, 50.00, 30.00, 'Heavy Armor',    'เกราะหนัก',           'Defense'),
-(3, 76.00, 20.00, 'Shoulder Plate', 'เกราะไหล่',           'Armor'),
-(3, 85.00, 40.00, 'Gauntlet',       'เกราะแขน',           'Armor'),
-(3, 40.00, 70.00, 'Greaves',        'เกราะขา',            'Armor');
-
--- Hotspots: Krixi
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(4, 20.00, 30.00, 'Wings',       'ปีก',               'Equipment'),
-(4, 50.00, 45.00, 'Leaf Dress',  'ชุดเดรสใบไม้',       'Attire'),
-(4, 70.00, 75.00, 'Fairy Shoes', 'รองเท้านางฟ้า',      'Attire'),
-(4, 47.00, 13.00, 'Hairband',    'ที่คาดผม',           'Accessory'),
-(4, 33.00, 68.00, 'Stockings',   'ถุงน่อง',            'Attire');
-
--- Hotspots: Alice
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(5, 17.00, 35.00, 'Staff',      'คทา/ไม้เท้าเวทมนตร์',  'Weapon'),
-(5, 65.00, 80.00, 'Boots',      'รองเท้าบูท',          'Equipment'),
-(5, 50.00, 40.00, 'Robe',       'ชุดคลุมเวทมนตร์',     'Attire'),
-(5, 79.00, 25.00, 'Wings',      'ปีก',               'Equipment'),
-(5, 50.00, 73.00, 'Stockings',  'ถุงน่อง',            'Attire');
-
--- Hotspots: Yena
-INSERT INTO `hotspots` (`character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
-(6,  8.00, 22.00, 'Blade',           'ดาบ',          'Weapon'),
-(6, 46.00, 43.00, 'Battle Dress',    'ชุดเดรสต่อสู้',   'Attire'),
-(6, 27.00, 85.00, 'Boots',           'รองเท้าบูท',    'Attire'),
-(6, 62.00, 32.00, 'Shoulder Guard',  'เกราะไหล่',     'Defense'),
-(6, 45.00, 70.00, 'Leg Armor',       'เกราะขา',      'Armor'),
-(6, 75.00, 58.00, 'Dual Blade Aura', 'พลังมีดคู่',    'Weapon');
+-- Hotspots (569 Rich Vocabulary Words)
+INSERT INTO `hotspots` (`id`, `character_id`, `x`, `y`, `word`, `mean`, `type`) VALUES
+-- Hero 1: Violet
+(101, 1, 80.00, 55.00, 'Pistol', 'ปืนพกคู่กาย', 'Weapon'),
+(102, 1, 50.00, 28.00, 'Tactical Suit', 'ชุดเกราะยุทธวิธี', 'Attire'),
+(103, 1, 30.00, 45.00, 'Ammunition', 'ซองกระสุนปืน', 'Accessories'),
+(104, 1, 15.00, 15.00, 'Shotgun', 'ปืนลูกซองประจัญบาน', 'Weapon'),
+(105, 1, 50.00, 40.00, 'Utility Belt', 'เข็มขัดอุปกรณ์สนาม', 'Accessories'),
+(106, 1, 25.00, 90.00, 'Combat Boots', 'รองเท้าบูททหาร', 'Attire'),
+-- Hero 2: Butterfly
+(201, 2, 20.00, 40.00, 'Broadsword', 'ดาบใหญ่ใบกว้าง', 'Weapon'),
+(202, 2, 50.00, 23.00, 'Cape', 'ผ้าคลุมหลัง', 'Attire'),
+(203, 2, 40.00, 78.00, 'Boots', 'รองเท้าบูทหนัง', 'Attire'),
+(204, 2, 80.00, 20.00, 'Wing Ornament', 'ปีกประดับหลัง', 'Accessories'),
+(205, 2, 73.00, 45.00, 'Wrist Guard', 'ปลอกแขนป้องกัน', 'Armor'),
+(206, 2, 45.00, 35.00, 'Armor Plate', 'แผ่นเกราะหน้าอก', 'Armor'),
+-- Hero 3: Thane
+(301, 3, 20.00, 50.00, 'Shield', 'โล่เกราะเหล็กกล้า', 'Armor'),
+(302, 3, 85.00, 55.00, 'Excalibur', 'ดาบศักดิ์สิทธิ์', 'Weapon'),
+(303, 3, 50.00, 30.00, 'Heavy Armor', 'เกราะหนักอัศวิน', 'Armor'),
+(304, 3, 76.00, 20.00, 'Shoulder Plate', 'เกราะไหล่เหล็ก', 'Armor'),
+(305, 3, 85.00, 40.00, 'Gauntlet', 'ถุงมือเกราะเหล็ก', 'Armor'),
+(306, 3, 40.00, 70.00, 'Greaves', 'สนับแข้งกษัตริย์', 'Armor'),
+-- Hero 4: Krixi
+(401, 4, 20.00, 30.00, 'Fairy Wings', 'ปีกภูตพฤกษา', 'Accessories'),
+(402, 4, 50.00, 45.00, 'Leaf Dress', 'ชุดเดรสกลีบใบไม้', 'Attire'),
+(403, 4, 70.00, 75.00, 'Fairy Shoes', 'รองเท้านางฟ้า', 'Attire'),
+(404, 4, 47.00, 13.00, 'Hairband', 'ที่คาดผมดอกไม้', 'Accessories'),
+(405, 4, 33.00, 68.00, 'Stockings', 'ถุงน่องใยบัว', 'Attire'),
+(406, 4, 78.00, 32.00, 'Moonfall Ray', 'ลำแสงจันทราตก', 'Magic/Skills'),
+-- Hero 5: Alice
+(501, 5, 17.00, 35.00, 'Magic Staff', 'ไม้เท้ามนตรา', 'Weapon'),
+(502, 5, 65.00, 80.00, 'Fairy Boots', 'รองเท้าบูทเวทมนตร์', 'Attire'),
+(503, 5, 50.00, 40.00, 'Magic Robe', 'เสื้อคลุมเวทมนตร์', 'Attire'),
+(504, 5, 79.00, 25.00, 'Star Wings', 'ปีกแห่งดวงดาว', 'Accessories'),
+(505, 5, 50.00, 73.00, 'Stockings', 'ถุงน่องลายดาว', 'Attire'),
+(506, 5, 30.00, 60.00, 'Chrono Shield', 'โล่กาลเวลา', 'Magic/Skills'),
+-- Hero 6: Yena
+(601, 6, 8.00, 22.00, 'Crescent Blade', 'ดาบโค้งจันทร์เสี้ยว', 'Weapon'),
+(602, 6, 46.00, 43.00, 'Battle Dress', 'ชุดเกราะระบำรบ', 'Attire'),
+(603, 6, 27.00, 85.00, 'Combat Boots', 'รองเท้าบูทต่อสู้', 'Attire'),
+(604, 6, 62.00, 32.00, 'Shoulder Guard', 'เกราะป้องกันไหล่', 'Armor'),
+(605, 6, 45.00, 70.00, 'Leg Armor', 'เกราะสนับขา', 'Armor'),
+(606, 6, 75.00, 58.00, 'Dual Blade Aura', 'ออร่าระบำดาบคู่', 'Magic/Skills'),
+-- Hero 7: Airi
+(701, 7, 22.00, 45.00, 'Dual Katanas', 'ดาบคู่คาตานะ', 'Weapon'),
+(702, 7, 50.00, 20.00, 'Ninja Mask', 'หน้ากากนินจา', 'Attire'),
+(703, 7, 52.00, 42.00, 'Kimono Tunic', 'ชุดกิโมโนต่อสู้', 'Attire'),
+(704, 7, 38.00, 82.00, 'Shin Guards', 'สนับแข้งนินจา', 'Armor'),
+(705, 7, 78.00, 35.00, 'Shadow Shuriken', 'ดาวกระจายเงา', 'Weapon'),
+(706, 7, 80.00, 65.00, 'Dragon Spirit', 'จิตวิญญาณมังกร', 'Magic/Skills'),
+-- Hero 8: Aleister
+(801, 8, 25.00, 48.00, 'Magic Grimoire', 'ตำรามนตราทมิฬ', 'Weapon'),
+(802, 8, 50.00, 42.00, 'Sorcerer Robe', 'ชุดคลุมจอมเวท', 'Attire'),
+(803, 8, 75.00, 32.00, 'Lightning Sigil', 'สัญลักษณ์สายฟ้า', 'Magic/Skills'),
+(804, 8, 50.00, 16.00, 'Mystic Diadem', 'รัดเกล้ามนตรา', 'Accessories'),
+(805, 8, 65.00, 26.00, 'Shoulder Mantle', 'ผ้าคลุมไหล่เวทมนตร์', 'Attire'),
+-- Hero 9: Allain
+(901, 9, 22.00, 48.00, 'Twin Swords', 'ดาบคู่แสงและความมืด', 'Weapon'),
+(902, 9, 50.00, 38.00, 'Battle Coat', 'เสื้อโค้ตนักรบ', 'Attire'),
+(903, 9, 75.00, 42.00, 'Leather Gloves', 'ถุงมือหนังกระชับดาบ', 'Accessories'),
+(904, 9, 48.00, 72.00, 'Combat Boots', 'รองเท้าบูทประจัญบาน', 'Attire'),
+(905, 9, 80.00, 25.00, 'Meteor Strike', 'การจู่โจมดาวตก', 'Magic/Skills'),
+-- Hero 10: Amily
+(1001, 10, 42.00, 82.00, 'Bladed Greaves', 'ใบมีดติดสนับแข้ง', 'Weapon'),
+(1002, 10, 50.00, 35.00, 'Leather Jacket', 'แจ็กเก็ตหนังนักฆ่า', 'Attire'),
+(1003, 10, 28.00, 48.00, 'Combat Dagger', 'มีดสั้นต่อสู้ประชิด', 'Weapon'),
+(1004, 10, 55.00, 62.00, 'Leg Armor', 'เกราะแผ่นป้องกันขา', 'Armor'),
+(1005, 10, 78.00, 40.00, 'Enrage Aura', 'ออร่าความโกรธแค้น', 'Magic/Skills'),
+-- Hero 11: Annette
+(1101, 11, 25.00, 42.00, 'Wind Wand', 'คทาสายลมหมุน', 'Weapon'),
+(1102, 11, 50.00, 15.00, 'Witch Hat', 'หมวกแม่มดฝึกหัด', 'Accessories'),
+(1103, 11, 50.00, 45.00, 'Academy Uniform', 'เครื่องแบบสถาบันเวท', 'Attire'),
+(1104, 11, 78.00, 55.00, 'Wind Barrier', 'ม่านลมพายุคุ้มกัน', 'Magic/Skills'),
+(1105, 11, 48.00, 85.00, 'Ribbon Shoes', 'รองเท้าผูกโบว์', 'Attire'),
+-- Hero 12: Aoi
+(1201, 12, 25.00, 45.00, 'Dragon Claws', 'กรงเล็บมังกรสังหาร', 'Weapon'),
+(1202, 12, 60.00, 28.00, 'Dragon Scarf', 'ผ้าพันคอมังกรเขี้ยว', 'Accessories'),
+(1203, 12, 50.00, 45.00, 'Shinobi Outfit', 'ชุดนินจาสาวคล่องแคล่ว', 'Attire'),
+(1204, 12, 82.00, 35.00, 'Grappling Cable', 'สายสลิงโหนเวหา', 'Weapon'),
+(1205, 12, 75.00, 70.00, 'Dragon Slash', 'การเหินฟันมังกร', 'Magic/Skills'),
+-- Hero 13: Arduin
+(1301, 13, 22.00, 45.00, 'Frost Axe', 'ขวานยักษ์เยือกแข็ง', 'Weapon'),
+(1302, 13, 50.00, 16.00, 'Horned Helmet', 'หมวกเกราะเหล็กมีเขา', 'Armor'),
+(1303, 13, 50.00, 40.00, 'Plate Armor', 'ชุดเกราะเหล็กแผ่นหนา', 'Armor'),
+(1304, 13, 75.00, 30.00, 'Iron Pauldron', 'เกราะไหล่เหล็กหนาม', 'Armor'),
+(1305, 13, 52.00, 80.00, 'Frost Aura', 'ออร่าความเย็นเยือกแข็ง', 'Magic/Skills'),
+-- Hero 14: Arum
+(1401, 14, 22.00, 35.00, 'Beast Spirits', 'วิญญาณสิงโตอสูร', 'Magic/Skills'),
+(1402, 14, 50.00, 48.00, 'Priestess Robe', 'ชุดคลุมนักบวชหญิง', 'Attire'),
+(1403, 14, 50.00, 15.00, 'Horn Headdress', 'รัดเกล้าเขาสัตว์ป่า', 'Accessories'),
+(1404, 14, 78.00, 50.00, 'Soul Chains', 'โซ่พันธนาการวิญญาณ', 'Magic/Skills'),
+(1405, 14, 35.00, 45.00, 'Tribal Bangles', 'กำไลข้อมือชนเผ่า', 'Accessories'),
+-- Hero 15: Astrid
+(1501, 15, 20.00, 45.00, 'Greatsword', 'ดาบยักษ์ประจำตระกูล', 'Weapon'),
+(1502, 15, 50.00, 35.00, 'Steel Cuirass', 'เกราะอกเหล็กกล้า', 'Armor'),
+(1503, 15, 75.00, 35.00, 'Royal Cape', 'ผ้าคลุมขุนนางราชสำนัก', 'Attire'),
+(1504, 15, 32.00, 50.00, 'Plated Gauntlet', 'ถุงมือเกราะอัศวิน', 'Armor'),
+(1505, 15, 65.00, 65.00, 'Fearless Slash', 'เพลงดาบไร้ความกลัว', 'Magic/Skills'),
+-- Hero 16: Ata
+(1601, 16, 25.00, 42.00, 'Heavy Anchor', 'สมอเรือเหล็กยักษ์', 'Weapon'),
+(1602, 16, 50.00, 18.00, 'Sailor Bandana', 'ผ้าโพกศีรษะลูกเรือ', 'Accessories'),
+(1603, 16, 50.00, 68.00, 'Pirate Trousers', 'กางเกงกะลาสีลายทาง', 'Attire'),
+(1604, 16, 78.00, 50.00, 'Ghost Ship Barricade', 'บาเรียเรือผีสิง', 'Magic/Skills'),
+(1605, 16, 42.00, 40.00, 'Leather Harness', 'สายสะพายไหล่หนัง', 'Accessories'),
+-- Hero 17: Aya
+(1701, 17, 35.00, 45.00, 'Magic Microphone', 'ไมโครโฟนเวทมนตร์', 'Weapon'),
+(1702, 17, 50.00, 15.00, 'Squirrel Ears', 'หูกระรอกน้อยน่ารัก', 'Accessories'),
+(1703, 17, 50.00, 50.00, 'Idyllic Dress', 'ชุดเดรสไอดอลแสนหวาน', 'Attire'),
+(1704, 17, 72.00, 40.00, 'Soundwave Shield', 'โล่คลื่นเสียงคุ้มกัน', 'Magic/Skills'),
+(1705, 17, 50.00, 82.00, 'Leaf Boots', 'รองเท้าใบไม้ภูต', 'Attire'),
+-- Hero 18: Azzen'Ka
+(1801, 18, 25.00, 45.00, 'Sand Scepter', 'คทาทรายทะเลทราย', 'Weapon'),
+(1802, 18, 50.00, 38.00, 'Desert Shroud', 'ผ้าคลุมทรายบรรพกาล', 'Attire'),
+(1803, 18, 50.00, 16.00, 'Golden Mask', 'หน้ากากทองคำฟาโรห์', 'Accessories'),
+(1804, 18, 78.00, 60.00, 'Sandstorm Vortex', 'พายุทรายดูดกลืน', 'Magic/Skills'),
+(1805, 18, 45.00, 70.00, 'Cursed Wrappings', 'ผ้าพันแผลต้องสาป', 'Attire'),
+-- Hero 19: Baldum
+(1901, 19, 25.00, 45.00, 'Monolithic Totem', 'เสาหินโทเท็มยักษ์', 'Weapon'),
+(1902, 19, 50.00, 35.00, 'Stone Carapace', 'กระดองหินแกรนิตหนา', 'Armor'),
+(1903, 19, 50.00, 60.00, 'Centaur Hooves', 'กีบเท้าเซนทอร์หิน', 'Attire'),
+(1904, 19, 75.00, 70.00, 'Seismic Stomp', 'การกระทืบดินถล่ม', 'Magic/Skills'),
+(1905, 19, 50.00, 16.00, 'Earth Horns', 'เขาหินศิลาผา', 'Armor'),
+-- Hero 20: Bright
+(2001, 20, 25.00, 42.00, 'Spear of Light', 'หอกประกายแสงศักดิ์สิทธิ์', 'Weapon'),
+(2002, 20, 75.00, 45.00, 'Holy Blade', 'ดาบสั้นแห่งความยุติธรรม', 'Weapon'),
+(2003, 20, 50.00, 38.00, 'Light Vestment', 'เสื้อคลุมผู้แทนพระเจ้า', 'Attire'),
+(2004, 20, 50.00, 14.00, 'Radiant Halo', 'รัศมีวงแหวนสวรรค์', 'Magic/Skills'),
+(2005, 20, 48.00, 82.00, 'Plated Vambraces', 'ปลอกแขนเกราะเหล็ก', 'Armor'),
+-- Hero 21: Capheny
+(2101, 21, 75.00, 50.00, 'Pulse Cannon', 'ปืนใหญ่พลังงานพัลส์', 'Weapon'),
+(2102, 21, 25.00, 40.00, 'Battery Backpack', 'แบตเตอรี่สะพายหลัง', 'Armor'),
+(2103, 21, 50.00, 35.00, 'Military Uniform', 'เครื่องแบบทหารบกสาว', 'Attire'),
+(2104, 21, 50.00, 15.00, 'Beret', 'หมวกเบเร่ต์ทหารเกียรติยศ', 'Accessories'),
+(2105, 21, 82.00, 30.00, 'Laser Scope', 'กล้องเล็งลำแสงเลเซอร์', 'Accessories'),
+(2106, 21, 48.00, 85.00, 'Polished Boots', 'รองเท้าบูทขัดมัน', 'Attire'),
+-- Hero 22: Celica
+(2201, 22, 78.00, 55.00, 'Siege Cannon', 'ปืนใหญ่ตั้งป้อมยิงไกล', 'Weapon'),
+(2202, 22, 50.00, 18.00, 'Mechanic Goggles', 'แว่นตานิรภัยช่างกล', 'Accessories'),
+(2203, 22, 50.00, 42.00, 'Tool Belt', 'เข็มขัดกระเป๋าช่าง', 'Accessories'),
+(2204, 22, 40.00, 52.00, 'Reinforced Overalls', 'ชุดเอี๊ยมเสริมเกราะ', 'Attire'),
+(2205, 22, 22.00, 35.00, 'Blast Plate', 'แผ่นเกราะกันสะเก็ดระเบิด', 'Armor'),
+-- Hero 23: Chaugnar
+(2301, 23, 50.00, 30.00, 'Chaos Trunk', 'งวงแห่งความโกลาหล', 'Weapon'),
+(2302, 23, 35.00, 25.00, 'Mystic Tusks', 'งาช้างเวทมนตร์โบราณ', 'Accessories'),
+(2303, 23, 50.00, 50.00, 'Nether Armor', 'เกราะเนื้อหนังมิติมายา', 'Armor'),
+(2304, 23, 75.00, 60.00, 'Cleansing Wave', 'คลื่นคลายสถานะผิดปกติ', 'Magic/Skills'),
+(2305, 23, 65.00, 38.00, 'Ancient Sigil', 'อักขระเวทสลักบนผิว', 'Accessories'),
+-- Hero 24: Cresht
+(2401, 24, 22.00, 42.00, 'Coral Trident', 'ตรีศูลปะการังสมุทร', 'Weapon'),
+(2402, 24, 72.00, 28.00, 'Shell Pauldron', 'เกราะไหล่เปลือกหอยยักษ์', 'Armor'),
+(2403, 24, 50.00, 18.00, 'Abyssal Helm', 'หมวกเกราะใต้สมุทรลึก', 'Armor'),
+(2404, 24, 80.00, 60.00, 'Tidal Metamorphosis', 'การแปลงร่างสัตว์ยักษ์สมุทร', 'Magic/Skills'),
+(2405, 24, 30.00, 55.00, 'Fin Guards', 'ครีบเกราะป้องกันข้อมือ', 'Accessories'),
+-- Hero 25: D'Arcy
+(2501, 25, 75.00, 45.00, 'Dimensional Cube', 'ลูกบาศก์พลังมิติสวรรค์', 'Weapon'),
+(2502, 25, 50.00, 38.00, 'Spatial Mantle', 'ผ้าคลุมมิติเวลา', 'Attire'),
+(2503, 25, 50.00, 16.00, 'Void Band', 'แถบคาดศีรษะมิติดำมืด', 'Accessories'),
+(2504, 25, 25.00, 35.00, 'Astral Rift', 'รอยแยกมิติจักรวาล', 'Magic/Skills'),
+(2505, 25, 50.00, 72.00, 'Silk Trousers', 'กางเกงผ้าไหมเวทมนตร์', 'Attire'),
+-- Hero 26: Dextra
+(2601, 26, 25.00, 48.00, 'Chainsaw Blade', 'ดาบเลื่อยยนต์กระหายเลือด', 'Weapon'),
+(2602, 26, 50.00, 40.00, 'Crimson Bodysuit', 'ชุดแนบเนื้อสีแดงเพลิง', 'Attire'),
+(2603, 26, 72.00, 45.00, 'Armored Vambrace', 'สนับแขนเหล็กกล้า', 'Armor'),
+(2604, 26, 78.00, 25.00, 'Blood Vampire Seal', 'ผนึกสูบเลือดฟื้นฟูชีพ', 'Magic/Skills'),
+(2605, 26, 48.00, 85.00, 'Spiked Stilettos', 'รองเท้าส้นสูงปลายหนาม', 'Attire'),
+-- Hero 27: Diao Chan
+(2701, 27, 25.00, 45.00, 'Frost Staff', 'คทาดอกบัวน้ำแข็งหิมะ', 'Weapon'),
+(2702, 27, 50.00, 42.00, 'Silk Hanfu', 'ชุดฮั่นฝูผ้าไหมพลิ้วไหว', 'Attire'),
+(2703, 27, 50.00, 15.00, 'Lotus Tiara', 'รัดเกล้าดอกบัวคริสตัล', 'Accessories'),
+(2704, 27, 75.00, 55.00, 'Blizzard Ring', 'วงแหวนพายุหิมะเยือกแข็ง', 'Magic/Skills'),
+(2705, 27, 68.00, 32.00, 'Feather Fan', 'พัดขนนกยูงโบราณ', 'Accessories'),
+-- Hero 28: Dirak
+(2801, 28, 25.00, 45.00, 'Energy Scepter', 'คทาแกนพลังงานจักรวาล', 'Weapon'),
+(2802, 28, 50.00, 40.00, 'Archmage Robes', 'เสื้อคลุมจอมเวทสูงสุด', 'Attire'),
+(2803, 28, 78.00, 50.00, 'Genesis Barrier', 'กำแพงโล่กำเนิดมิติ', 'Magic/Skills'),
+(2804, 28, 50.00, 16.00, 'Laser Crown', 'มงกุฎแสงลำแสงสวรรค์', 'Accessories'),
+(2805, 28, 70.00, 28.00, 'Magic Sigil', 'สัญลักษณ์วงแหวนเวท', 'Magic/Skills'),
+-- Hero 29: Eland'orr
+(2901, 29, 25.00, 45.00, 'Soul Lantern', 'โคมไฟผีเสื้อวิญญาณ', 'Weapon'),
+(2902, 29, 75.00, 45.00, 'Elven Bow', 'คันธนูเอลฟ์ผู้พิทักษ์', 'Weapon'),
+(2903, 29, 50.00, 40.00, 'Forest Tunic', 'เสื้อทูนิคพงไพรอันงดงาม', 'Attire'),
+(2904, 29, 78.00, 25.00, 'Butterfly Swarm', 'ฝูงผีเสื้อเต้นระบำ', 'Magic/Skills'),
+(2905, 29, 68.00, 52.00, 'Leather Quiver', 'ซองใส่ลูกศรหนัง', 'Accessories'),
+-- Hero 30: Elsu
+(3001, 30, 78.00, 48.00, 'Sniper Rifle', 'ปืนซุ่มยิงไรเฟิลพิฆาต', 'Weapon'),
+(3002, 30, 22.00, 45.00, 'Recon Sentinel', 'อุปกรณ์เซนเซอร์สอดแนม', 'Accessories'),
+(3003, 30, 45.00, 30.00, 'Camouflage Cloak', 'ผ้าคลุมพรางตานักล่า', 'Attire'),
+(3004, 30, 50.00, 42.00, 'Tactical Vest', 'เสื้อกั๊กเกราะยุทธการ', 'Armor'),
+(3005, 30, 38.00, 55.00, 'Combat Arm Guard', 'เกราะป้องกันต้นแขน', 'Armor'),
+-- Hero 31: Enzo
+(3101, 31, 25.00, 48.00, 'Chain Hook', 'โซ่ตะขอเกี่ยวพิพากษา', 'Weapon'),
+(3102, 31, 50.00, 38.00, 'Inquisitor Coat', 'เสื้อโค้ตผู้สอบสวนศาล', 'Attire'),
+(3103, 31, 72.00, 42.00, 'Executioner Gloves', 'ถุงมือเพชฌฆาตสีขาว', 'Accessories'),
+(3104, 31, 78.00, 65.00, 'Judgment Seal', 'ตราประทับพิพากษาโทษ', 'Magic/Skills'),
+(3105, 31, 48.00, 82.00, 'Leather Straps', 'สายรัดหนังพกอาวุธ', 'Accessories'),
+-- Hero 32: Errol
+(3201, 32, 25.00, 45.00, 'Demon Arm', 'แขนปีศาจกลายพันธุ์', 'Weapon'),
+(3202, 32, 78.00, 45.00, 'Blood Scythe', 'เคียวโลหิตกระหายเลือด', 'Weapon'),
+(3203, 32, 50.00, 38.00, 'Ragged Trenchcoat', 'เสื้อเทรนช์โค้ตขาดวิ่น', 'Attire'),
+(3204, 32, 50.00, 18.00, 'Demonic Eye', 'เนตรปีศาจสีแดงก่ำ', 'Accessories'),
+(3205, 32, 70.00, 70.00, 'Dark Resonance', 'คลื่นสั่นพ้องแห่งความมืด', 'Magic/Skills'),
+-- Hero 33: Fennik
+(3301, 33, 25.00, 42.00, 'Giant Slingshot', 'หนังสติ๊กยักษ์สายฟ้า', 'Weapon'),
+(3302, 33, 50.00, 16.00, 'Fox Goggles', 'แว่นตานิรภัยจิ้งจอก', 'Accessories'),
+(3303, 33, 50.00, 32.00, 'Scarf of Swiftness', 'ผ้าพันคอแห่งความเร็ว', 'Attire'),
+(3304, 33, 48.00, 50.00, 'Explorer Vest', 'เสื้อกั๊กนักสำรวจตัวจิ๋ว', 'Attire'),
+(3305, 33, 75.00, 35.00, 'Lightning Thief Aura', 'ออร่าขโมยสายฟ้าฟาด', 'Magic/Skills'),
+-- Hero 34: Florentino
+(3401, 34, 25.00, 45.00, 'Fencing Rapier', 'ดาบเรียวฟันดาบสากล', 'Weapon'),
+(3402, 34, 72.00, 38.00, 'Red Rose', 'ดอกกุหลาบแดงแห่งการดวล', 'Accessories'),
+(3403, 34, 50.00, 35.00, 'Aristocrat Tunic', 'เสื้อทูนิคขุนนางชั้นสูง', 'Attire'),
+(3404, 34, 40.00, 25.00, 'Duelist Cape', 'ผ้าคลุมสั้นนักดาบเอก', 'Attire'),
+(3405, 34, 50.00, 78.00, 'Riding Boots', 'รองเท้าบูทหนังขี่ม้า', 'Attire'),
+-- Hero 35: Gildur
+(3501, 35, 25.00, 45.00, 'Golden Gauntlet', 'สนับมือทองคำบริสุทธิ์', 'Weapon'),
+(3502, 35, 50.00, 15.00, 'Golden Crown', 'มงกุฎราชาทองคำแท้', 'Accessories'),
+(3503, 35, 50.00, 35.00, 'Gilded Cuirass', 'เกราะอกเคลือบทองคำ', 'Armor'),
+(3504, 35, 75.00, 45.00, 'Midas Touch', 'สัมผัสทองคำสะกดวิญญาณ', 'Magic/Skills'),
+(3505, 35, 48.00, 80.00, 'Chariot Spikes', 'หนามเกราะรถศึกทองคำ', 'Armor'),
+-- Hero 36: Grakk
+(3601, 36, 25.00, 45.00, 'Soul Hook', 'ตะขอโซ่ดึงวิญญาณ', 'Weapon'),
+(3602, 36, 75.00, 45.00, 'Heavy Cleaver', 'มีดปังตอยักษ์สับเนื้อ', 'Weapon'),
+(3603, 36, 50.00, 50.00, 'Gluttony Maw', 'ปากท้องปีศาจสูบวิญญาณ', 'Attire'),
+(3604, 36, 50.00, 22.00, 'Spiked Iron Collar', 'ปลอกคอเหล็กหนามยักษ์', 'Armor'),
+(3605, 36, 78.00, 65.00, 'World Devourer Aura', 'พลังกลืนกินสรรพสิ่ง', 'Magic/Skills'),
+-- Hero 37: Hayate
+(3701, 37, 25.00, 45.00, 'Shuriken Darts', 'ดาวกระจายคุไนสายมืด', 'Weapon'),
+(3702, 37, 50.00, 22.00, 'Dragon Veil', 'ผ้าคลุมหน้าลายนินจามังกร', 'Attire'),
+(3703, 37, 50.00, 40.00, 'Shinobi Tunic', 'ชุดเสื้อนินจาเงาเพลิง', 'Attire'),
+(3704, 37, 75.00, 48.00, 'Shadow Kunai', 'มีดสั้นคุไนอาบเงา', 'Weapon'),
+(3705, 37, 75.00, 25.00, 'Phantom Dash Trail', 'เงาวาร์ปพริบตาสังหาร', 'Magic/Skills'),
+-- Hero 38: Iggy
+(3801, 38, 25.00, 45.00, 'Flame Orb', 'ลูกแก้วเพลิงปะทุ', 'Weapon'),
+(3802, 38, 50.00, 38.00, 'Aristocrat Coat', 'เสื้อโค้ตขุนนางเพลิง', 'Attire'),
+(3803, 38, 50.00, 16.00, 'Ember Cat Ears', 'หูแมวเพลิงเปลวไฟ', 'Accessories'),
+(3804, 38, 75.00, 35.00, 'Magma Burst', 'ระเบิดแมกมาเพลิงพิโรธ', 'Magic/Skills'),
+(3805, 38, 72.00, 45.00, 'Fireproof Gloves', 'ถุงมือกันความร้อนสูง', 'Accessories'),
+-- Hero 39: Ignis
+(3901, 39, 25.00, 45.00, 'Flame Staff', 'ไม้เท้าเพลิงศักดิ์สิทธิ์', 'Weapon'),
+(3902, 39, 50.00, 42.00, 'Wizard Robe', 'เสื้อคลุมนักบวชไฟโบราณ', 'Attire'),
+(3903, 39, 72.00, 48.00, 'Holy Scriptures', 'พระคัมภีร์เพลิงศักดิ์สิทธิ์', 'Accessories'),
+(3904, 39, 50.00, 22.00, 'White Beard', 'หนวดเคราสีขาวยาว', 'Accessories'),
+(3905, 39, 78.00, 28.00, 'Sacred Flame Seal', 'มนต์ตราผนึกเพลิงสวรรค์', 'Magic/Skills'),
+-- Hero 40: Ilumia
+(4001, 40, 25.00, 45.00, 'Divine Scepter', 'คทาแสงเทพสวรรค์', 'Weapon'),
+(4002, 40, 50.00, 16.00, 'Goddess Blindfold', 'ผ้าปิดตาเทพธิดา', 'Accessories'),
+(4003, 40, 50.00, 45.00, 'Celestial Gown', 'ชุดราตรีแห่งสรวงสวรรค์', 'Attire'),
+(4004, 40, 78.00, 25.00, 'Light of Judgment', 'ลำแสงพิพากษาทั่วหล้า', 'Magic/Skills'),
+(4005, 40, 65.00, 28.00, 'Golden Pauldron', 'เกราะไหล่ทองคำแห่งแสง', 'Armor'),
+-- Hero 41: Ishar
+(4101, 41, 25.00, 45.00, 'Magic Wand', 'ไม้กายสิทธิ์ดวงดาว', 'Weapon'),
+(4102, 41, 75.00, 65.00, 'Furball Companion', 'สัตว์เลี้ยงขนปุยเฟอร์บอล', 'Magic/Skills'),
+(4103, 41, 50.00, 15.00, 'School Beret', 'หมวกเบเร่ต์นักเรียนเวท', 'Accessories'),
+(4104, 41, 50.00, 45.00, 'Plaid Dress', 'ชุดกระโปรงลายสก็อต', 'Attire'),
+(4105, 41, 72.00, 35.00, 'Mana Barrier', 'โล่บาเรียพลังเวทมนตร์', 'Magic/Skills'),
+-- Hero 42: Jinna
+(4201, 42, 25.00, 45.00, 'Prayer Beads', 'ลูกประคำพลังจิตวิญญาณ', 'Weapon'),
+(4202, 42, 50.00, 40.00, 'Monk Robes', 'จีวรพระสงฆ์สายรบ', 'Attire'),
+(4203, 42, 75.00, 40.00, 'Nirvana Aura', 'ออร่าตรัสรู้ธรรมบรรลุ', 'Magic/Skills'),
+(4204, 42, 50.00, 22.00, 'Golden Talisman', 'ผ้ายันต์มงคลทองคำ', 'Accessories'),
+(4205, 42, 72.00, 55.00, 'Armored Bracers', 'ปลอกแขนสนับสมาธิ', 'Armor'),
+-- Hero 43: Kahlii
+(4301, 43, 25.00, 45.00, 'Ghost Blades', 'มีดบินวิญญาณมารผยอง', 'Weapon'),
+(4302, 43, 75.00, 40.00, 'Silhouette Arms', 'เงาร่างแขนกลหลายกร', 'Magic/Skills'),
+(4303, 43, 50.00, 45.00, 'Goddess Shroud', 'ส่าหรีเทวีแห่งความตาย', 'Attire'),
+(4304, 43, 50.00, 15.00, 'Skull Crown', 'มงกุฎหัวกะโหลกทมิฬ', 'Accessories'),
+(4305, 43, 78.00, 25.00, 'Spiritual Missiles', 'กระสุนวิญญาณสาดส่อง', 'Magic/Skills'),
+-- Hero 44: Keera
+(4401, 44, 25.00, 48.00, 'Shadow Scissors', 'กรรไกรเงายักษ์ตัดวิญญาณ', 'Weapon'),
+(4402, 44, 50.00, 45.00, 'Lolita Dress', 'ชุดโลลิต้าโกธิคสีดำ', 'Attire'),
+(4403, 44, 50.00, 15.00, 'Triangle Witch Hat', 'หมวกทรงแหลมมนตรา', 'Accessories'),
+(4404, 44, 75.00, 35.00, 'Shadow Portal', 'ประตูมิติดำดิ่งกำแพง', 'Magic/Skills'),
+(4405, 44, 50.00, 25.00, 'Ribbon Choker', 'ปลอกคอริบบิ้นกำมะหยี่', 'Accessories'),
+-- Hero 45: Kil'Groth
+(4501, 45, 25.00, 45.00, 'Sea Beast Blade', 'ดาบกระดูกอสูรทะเลลึก', 'Weapon'),
+(4502, 45, 50.00, 38.00, 'Abyssal Scales', 'เกล็ดเกราะปลาใต้สมุทร', 'Armor'),
+(4503, 45, 72.00, 30.00, 'Fin Dorsal', 'ครีบหลังสัตว์ทะเลยักษ์', 'Accessories'),
+(4504, 45, 78.00, 55.00, 'Frenzy Wave', 'คลื่นคลั่งไร้การควบคุม', 'Magic/Skills'),
+(4505, 45, 35.00, 60.00, 'Spiked Bracers', 'สนับแขนหนามปะการัง', 'Armor'),
+-- Hero 46: Kriknak
+(4601, 46, 25.00, 45.00, 'Insectoid Scythes', 'เคียวกรงเล็บแมลงมรณะ', 'Weapon'),
+(4602, 46, 50.00, 38.00, 'Chitin Exoskeleton', 'เปลือกเกราะไคตินแข็งแกร่ง', 'Armor'),
+(4603, 46, 50.00, 16.00, 'Beetle Horns', 'เขาด้วงยักษ์พิฆาต', 'Armor'),
+(4604, 46, 75.00, 25.00, 'Insect Wings', 'ปีกแมลงบินโฉบเฉี่ยว', 'Accessories'),
+(4605, 46, 78.00, 65.00, 'Venom Stinger', 'เหล็กในพิษร้ายสังหาร', 'Magic/Skills'),
+-- Hero 47: Krizzix
+(4701, 47, 25.00, 45.00, 'Camouflage Staff', 'ไม้เท้าอำพรางตัวพงไพร', 'Weapon'),
+(4702, 47, 50.00, 38.00, 'Chameleon Scales', 'เกล็ดกิ้งก่าเปลี่ยนสี', 'Armor'),
+(4703, 47, 50.00, 16.00, 'Tribal Headdress', 'ขนนกประดับศีรษะชนเผ่า', 'Accessories'),
+(4704, 47, 75.00, 40.00, 'Invisibility Cloak', 'ม่านพลังล่องหนหมู่', 'Magic/Skills'),
+(4705, 47, 78.00, 65.00, 'Gravitational Pull', 'แรงดึงดูดรวมศูนย์กลาง', 'Magic/Skills'),
+-- Hero 48: Lauriel
+(4801, 48, 20.00, 30.00, 'Angelic Wings', 'ปีกเทวทูตหกปีกบริสุทธิ์', 'Accessories'),
+(4802, 48, 50.00, 42.00, 'Holy Robes', 'เสื้อคลุมนักบวชหญิงสวรรค์', 'Attire'),
+(4803, 48, 50.00, 14.00, 'Golden Halo', 'วงแหวนทองคำแห่งทวยเทพ', 'Accessories'),
+(4804, 48, 75.00, 60.00, 'Divine Circle', 'วงแหวนเวทชำระล้างบาป', 'Magic/Skills'),
+(4805, 48, 78.00, 35.00, 'Sacred Orbs', 'ลูกแก้วประกายแสงเทวา', 'Weapon'),
+-- Hero 49: Laville
+(4901, 49, 25.00, 48.00, 'Dual Blasters', 'ปืนคู่ประกายแสงความเร็วสูง', 'Weapon'),
+(4902, 49, 50.00, 38.00, 'Lightguard Coat', 'เสื้อโค้ตผู้พิทักษ์วิหาร', 'Attire'),
+(4903, 49, 50.00, 16.00, 'Visor Headset', 'แว่นสายตากึ่งหูฟังเล็งเป้า', 'Accessories'),
+(4904, 49, 78.00, 35.00, 'Shield Generator', 'เครื่องสร้างโล่แสงคุ้มกัน', 'Magic/Skills'),
+(4905, 49, 50.00, 55.00, 'Holster Belt', 'ซองปืนเข็มขัดยุทธวิธี', 'Accessories'),
+-- Hero 50: Liliana
+(5001, 50, 22.00, 60.00, 'Nine Tails', 'เก้าหางจิ้งจอกสวรรค์', 'Magic/Skills'),
+(5002, 50, 75.00, 45.00, 'Divination Wand', 'คทาทำนายชะตาลายคราม', 'Weapon'),
+(5003, 50, 50.00, 42.00, 'Priestess Kimono', 'ชุดกิโมโนมิโกะจิ้งจอก', 'Attire'),
+(5004, 50, 50.00, 16.00, 'Fox Ears', 'หูจิ้งจอกสวรรค์สีขาว', 'Accessories'),
+(5005, 50, 72.00, 25.00, 'Reiki Orb', 'ลูกแก้วพลังเรกิบำเพ็ญ', 'Magic/Skills'),
+-- Hero 51: Lindis
+(5101, 51, 25.00, 45.00, 'Lunar Bow', 'คันธนูจันทราสีเงินยวง', 'Weapon'),
+(5102, 51, 50.00, 40.00, 'Moonlight Shroud', 'ผ้าคลุมอาบแสงจันทร์', 'Attire'),
+(5103, 51, 50.00, 16.00, 'Silver Headdress', 'รัดเกล้าเงินแห่งดวงจันทร์', 'Accessories'),
+(5104, 51, 75.00, 65.00, 'Spirit Trap', 'กับดักวิญญาณดวงจันทร์', 'Weapon'),
+(5105, 51, 70.00, 45.00, 'Quiver of Moonbeams', 'ซองลูกศรแสงจันทร์เพ็ญ', 'Accessories'),
+-- Hero 52: Lorion
+(5201, 52, 25.00, 45.00, 'Dark Lightning Orb', 'ลูกแก้วสายฟ้าทมิฬ', 'Weapon'),
+(5202, 52, 50.00, 38.00, 'Sorcerer Mantle', 'ผ้าคลุมจอมเวทแห่งเงา', 'Attire'),
+(5203, 52, 75.00, 35.00, 'Floating Rune Ring', 'วงแหวนอักขระลอยฟ้า', 'Magic/Skills'),
+(5204, 52, 50.00, 15.00, 'Void Crown', 'มงกุฎความว่างเปล่า', 'Accessories'),
+(5205, 52, 78.00, 65.00, 'Electric Surge', 'พลังประจุไฟฟ้าช็อตกระแทก', 'Magic/Skills'),
+-- Hero 53: Lu Bu
+(5301, 53, 25.00, 45.00, 'Sky Piercer Halberd', 'ทวนกรีดฟ้าสะท้านภพ', 'Weapon'),
+(5302, 53, 72.00, 28.00, 'Dragon Pauldrons', 'เกราะไหล่ลายมังกรผงาด', 'Armor'),
+(5303, 53, 50.00, 14.00, 'Pheasant Plume Crown', 'มงกุฎขนหางไก่ฟ้าศึก', 'Accessories'),
+(5304, 53, 78.00, 55.00, 'Blood Rage Aura', 'ออร่าโทสะโลหิตคลั่ง', 'Magic/Skills'),
+(5305, 53, 50.00, 65.00, 'Battle Skirt', 'เกราะกระโปรงศึกโบราณ', 'Armor'),
+-- Hero 54: Lumburr
+(5401, 54, 25.00, 45.00, 'Stone Fists', 'กำปั้นหินผาทรงพลัง', 'Weapon'),
+(5402, 54, 50.00, 35.00, 'Granite Chestplate', 'เกราะอกศิลาแกรนิตยักษ์', 'Armor'),
+(5403, 54, 75.00, 30.00, 'Earth Crags', 'สันหินงอกแนวป้องกันหลัง', 'Armor'),
+(5404, 54, 75.00, 65.00, 'Earth Splitter', 'เพลงหมัดแยกแผ่นดินไหว', 'Magic/Skills'),
+(5405, 54, 50.00, 22.00, 'Moss Beard', 'เคราตะไคร่น้ำบรรพกาล', 'Accessories'),
+-- Hero 55: Maloch
+(5501, 55, 22.00, 45.00, 'Cleaver of Damnation', 'ดาบยักษ์พิพากษานรก', 'Weapon'),
+(5502, 55, 78.00, 25.00, 'Hellfire Wings', 'ปีกค้างคาวเพลิงนรกานต์', 'Accessories'),
+(5503, 55, 50.00, 15.00, 'Demon Horns', 'เขาจอมมารปีศาจนรก', 'Accessories'),
+(5504, 55, 50.00, 40.00, 'Nether Plate Armor', 'ชุดเกราะเหล็กอเวจี', 'Armor'),
+(5505, 55, 75.00, 65.00, 'Shockwave Slam', 'ท่ากระโดดฟันสะเทือนโลกันตร์', 'Magic/Skills'),
+-- Hero 56: Marja
+(5601, 56, 25.00, 45.00, 'Worm Spirits', 'หนอนแมลงวิญญาณกาฝาก', 'Magic/Skills'),
+(5602, 56, 50.00, 42.00, 'Cursed Gown', 'ชุดราตรีแม่มดต้องคำสาป', 'Attire'),
+(5603, 56, 50.00, 16.00, 'Abyssal Crown', 'รัดเกล้าแห่งห้วงลึกทมิฬ', 'Accessories'),
+(5604, 56, 75.00, 35.00, 'Ghostform Veil', 'ร่างวิญญาณเงาอมตะ', 'Magic/Skills'),
+(5605, 56, 72.00, 55.00, 'Claw Rings', 'แหวนกรงเล็บแหลมคม', 'Weapon'),
+-- Hero 57: Max
+(5701, 57, 25.00, 45.00, 'Robotic Arms', 'แขนกลอัจฉริยะประดิษฐ์', 'Weapon'),
+(5702, 57, 75.00, 35.00, 'Jet Backpack', 'เจ็ทแพ็คขับเคลื่อนไอพ่น', 'Armor'),
+(5703, 57, 50.00, 16.00, 'Inventor Goggles', 'แว่นตากันลมสิ่งประดิษฐ์', 'Accessories'),
+(5704, 57, 50.00, 45.00, 'Insulated Jumpsuit', 'ชุดหมีฉนวนกันกระแสไฟ', 'Attire'),
+(5705, 57, 78.00, 60.00, 'Tracking Radar', 'เรดาร์ติดตามเป้าหมายทั่วแมพ', 'Magic/Skills'),
+-- Hero 58: Mganga
+(5801, 58, 25.00, 45.00, 'Voodoo Staff', 'ไม้เท้าวูดูหัวกะโหลก', 'Weapon'),
+(5802, 58, 72.00, 48.00, 'Poison Flask', 'ขวดแก้วบรรจุยาพิษเขียว', 'Weapon'),
+(5803, 58, 50.00, 18.00, 'Jester Hood', 'หมวกฮู้ดตัวตลกพิษ', 'Attire'),
+(5804, 58, 50.00, 45.00, 'Toxic Robes', 'เสื้อคลุมนักเล่นแร่แปรธาตุ', 'Attire'),
+(5805, 58, 75.00, 25.00, 'Toxic Detonation', 'ระเบิดพิษกัดกร่อนหมู่', 'Magic/Skills'),
+-- Hero 59: Mina
+(5901, 59, 25.00, 42.00, 'Death Scythe', 'เคียวมัจจุราชกระชากชีพ', 'Weapon'),
+(5902, 59, 50.00, 15.00, 'Spiked Crown', 'มงกุฎหนามราชินีแห่งความมืด', 'Accessories'),
+(5903, 59, 50.00, 38.00, 'Corset Armor', 'คอร์เซ็ตเกราะเหล็กสีม่วง', 'Armor'),
+(5904, 59, 78.00, 50.00, 'Taunt Aura', 'ออร่ายั่วยุบังคับโจมตี', 'Magic/Skills'),
+(5905, 59, 48.00, 80.00, 'Armored Greaves', 'สนับแข้งเกราะหนามแหลม', 'Armor'),
+-- Hero 60: Moren
+(6001, 60, 75.00, 48.00, 'Heavy Shotgun', 'ปืนลูกซองลำกล้องยักษ์', 'Weapon'),
+(6002, 60, 50.00, 42.00, 'Blacksmith Apron', 'ผ้ากันเปื้อนช่างตีเหล็ก', 'Attire'),
+(6003, 60, 50.00, 16.00, 'Welding Goggles', 'แว่นตาเชื่อมโลหะหนา', 'Accessories'),
+(6004, 60, 25.00, 45.00, 'Magnetic Grenade', 'ระเบิดแม่เหล็กดูดศัตรู', 'Weapon'),
+(6005, 60, 35.00, 55.00, 'Iron Bracers', 'ปลอกแขนเหล็กกล้ากันกระสุน', 'Armor'),
+-- Hero 61: Mortos
+(6101, 61, 25.00, 45.00, 'Holy Blade', 'ดาบศักดิ์สิทธิ์กำราบมาร', 'Weapon'),
+(6102, 61, 75.00, 45.00, 'Lion Crest Shield', 'โล่ตราสิงห์ราชัน', 'Armor'),
+(6103, 61, 50.00, 38.00, 'Knight Plate Armor', 'เกราะเหล็กแผ่นอัศวินศักดิ์สิทธิ์', 'Armor'),
+(6104, 61, 50.00, 16.00, 'Crowned Visor', 'หมวกเกราะเหล็กยอดมงกุฎ', 'Armor'),
+(6105, 61, 75.00, 70.00, 'Sword Vortex', 'พายุดาบศักดิ์สิทธิ์หมุนวน', 'Magic/Skills'),
+-- Hero 62: Murad
+(6201, 62, 25.00, 45.00, 'Blade of Time', 'ดาบโค้งกาลเวลาทะเลทราย', 'Weapon'),
+(6202, 62, 72.00, 48.00, 'Sand Hourglass', 'นาฬิกาทรายกุมเวลา', 'Accessories'),
+(6203, 62, 50.00, 16.00, 'Desert Turban', 'ผ้าโพกหัวชนเผ่าเร่ร่อน', 'Attire'),
+(6204, 62, 50.00, 40.00, 'Nomad Tunic', 'ชุดทูนิคทะเลทรายพริ้วไหว', 'Attire'),
+(6205, 62, 78.00, 28.00, 'Temporal Rift', 'รอยแยกมิติกาลเวลาไร้รอยแผล', 'Magic/Skills'),
+-- Hero 63: Nakroth
+(6301, 63, 25.00, 45.00, 'Crescent Blades', 'มีดดาบคู่จันทร์เสี้ยวประหาร', 'Weapon'),
+(6302, 63, 50.00, 16.00, 'Judgment Helm', 'หมวกเกราะผู้พิพากษานรก', 'Armor'),
+(6303, 63, 50.00, 38.00, 'Nether Armor', 'ชุดเกราะนักรบใต้พิภพ', 'Armor'),
+(6304, 63, 78.00, 45.00, 'Spectral Dash', 'การพุ่งทะลวงความเร็วแสง', 'Magic/Skills'),
+(6305, 63, 50.00, 65.00, 'Chain Faulds', 'เกราะโซ่ห้อยสะโพก', 'Armor'),
+-- Hero 64: Natalya
+(6401, 64, 25.00, 45.00, 'Toxic Familiars', 'ภูตวิญญาณพิษเขียวมรกต', 'Weapon'),
+(6402, 64, 78.00, 35.00, 'Poison Beam', 'ลำแสงพิษมรณะสังหาร', 'Magic/Skills'),
+(6403, 64, 50.00, 40.00, 'Sorceress Corset', 'คอร์เซ็ตผ้าไหมแม่มดร้าย', 'Attire'),
+(6404, 64, 50.00, 16.00, 'Horned Veil', 'ผ้าคลุมผมประดับเขาสัตว์', 'Accessories'),
+(6405, 64, 72.00, 55.00, 'Venom Gloves', 'ถุงมือยาวอาบมนตร์พิษ', 'Accessories'),
+-- Hero 65: Omega
+(6501, 65, 25.00, 45.00, 'Mecha Arms', 'แขนกลหุ่นรบทำลายล้าง', 'Weapon'),
+(6502, 65, 75.00, 45.00, 'Core Shield', 'โล่บาเรียเตาปฏิกรณ์', 'Armor'),
+(6503, 65, 50.00, 16.00, 'Optic Sensor', 'เลนส์เซนเซอร์ตาหุ่นยนต์', 'Accessories'),
+(6504, 65, 50.00, 40.00, 'Titanium Chassis', 'โครงเกราะไททาเนียมหนา', 'Armor'),
+(6505, 65, 75.00, 70.00, 'Overdrive Spin', 'ท่าหมุนควงสว่านโอเวอร์ไดรฟ์', 'Magic/Skills'),
+-- Hero 66: Omen
+(6601, 66, 25.00, 45.00, 'Bloodthirsty Scythe', 'ดาบกระบี่กระหายเลือด', 'Weapon'),
+(6602, 66, 75.00, 65.00, 'Cage of Death', 'กรงขังมรณะดึงตรึงชีพ', 'Magic/Skills'),
+(6603, 66, 50.00, 40.00, 'Bandaged Wrappings', 'แถบผ้าพันแผลเปื้อนโลหิต', 'Attire'),
+(6604, 66, 50.00, 22.00, 'Iron Collar', 'ปลอกคอเหล็กทาสสงคราม', 'Accessories'),
+(6605, 66, 78.00, 30.00, 'Thirst Aura', 'ออร่าบ้าคลั่งความกระหายเลือด', 'Magic/Skills'),
+-- Hero 67: Ormarr
+(6701, 67, 25.00, 45.00, 'War Hammer', 'ค้อนศึกยักษ์ไวกิ้ง', 'Weapon'),
+(6702, 67, 75.00, 45.00, 'Viking Sword', 'ดาบสั้นนักรบคนเถื่อน', 'Weapon'),
+(6703, 67, 50.00, 16.00, 'Horned Viking Helm', 'หมวกเหล็กไวกิ้งมีเขา', 'Armor'),
+(6704, 67, 70.00, 28.00, 'Fur Pauldron', 'เกราะไหล่หนังขนสัตว์หนา', 'Attire'),
+(6705, 67, 50.00, 65.00, 'Berserker Spin', 'หมุนควงสว่านคลั่งสะบั้น', 'Magic/Skills'),
+-- Hero 68: Paine
+(6801, 68, 25.00, 45.00, 'Conductor Baton', 'ไม้บาตองวาทยกรปีศาจ', 'Weapon'),
+(6802, 68, 50.00, 40.00, 'Orchestral Cape', 'เสื้อสูทคลุมคอนเสิร์ตมรณะ', 'Attire'),
+(6803, 68, 78.00, 25.00, 'Requiem Wings', 'ปีกวิญญาณบทเพลงส่งวิญญาณ', 'Accessories'),
+(6804, 68, 75.00, 55.00, 'Sonic Wave', 'คลื่นเสียงโซนิควูบดับ', 'Magic/Skills'),
+(6805, 68, 48.00, 85.00, 'Dress Shoes', 'รองเท้าคัทชูหนังเงาวับ', 'Attire'),
+-- Hero 69: Preyta
+(6901, 69, 25.00, 45.00, 'Plague Staff', 'คทากาฬโรคระบาด', 'Weapon'),
+(6902, 69, 50.00, 65.00, 'Wyvern Mount', 'มังกรไวเวิร์นพาหนะโรคระบาด', 'Magic/Skills'),
+(6903, 69, 50.00, 18.00, 'Bone Mask', 'หน้ากากกระดูกหัวกะโหลกสัตว์', 'Accessories'),
+(6904, 69, 50.00, 38.00, 'Tattered Cloak', 'ผ้าคลุมขาดวิ่นหมองหม่น', 'Attire'),
+(6905, 69, 78.00, 35.00, 'Poison Bomb', 'ระเบิดพิษก๊าซระบาด', 'Magic/Skills'),
+-- Hero 70: Qi
+(7001, 70, 25.00, 45.00, 'Martial Gauntlets', 'สนับมือหมัดกังฟูมังกร', 'Weapon'),
+(7002, 70, 50.00, 42.00, 'Kung Fu Gi', 'ชุดฝึกยุทธ์กังฟูผ้าฝ้าย', 'Attire'),
+(7003, 70, 72.00, 35.00, 'Steamed Bun', 'ซาลาเปาเพิ่มพลังลมปราณ', 'Accessories'),
+(7004, 70, 75.00, 65.00, 'Dragon Force Palm', 'ฝ่ามือมังกรกระแทกกำแพง', 'Magic/Skills'),
+(7005, 70, 50.00, 16.00, 'Martial Headband', 'ผ้าคาดหน้าผากจอมยุทธ์', 'Accessories'),
+-- Hero 71: Quillen
+(7101, 71, 25.00, 48.00, 'Dual Daggers', 'มีดสั้นคู่ลอบแทงข้างหลัง', 'Weapon'),
+(7102, 71, 50.00, 38.00, 'Stealth Cloak', 'ผ้าคลุมล่องหนพรางเงา', 'Attire'),
+(7103, 71, 50.00, 22.00, 'Purifier Crest', 'ตราสัญลักษณ์กลุ่มผู้ชำระล้าง', 'Accessories'),
+(7104, 71, 68.00, 52.00, 'Leather Holster', 'ซองหนังใส่มีดสั้นข้างเอว', 'Accessories'),
+(7105, 71, 78.00, 35.00, 'Shadow Step', 'ก้าวพริบตาลอบสังหาร', 'Magic/Skills'),
+-- Hero 72: Raz
+(7201, 72, 25.00, 45.00, 'Flaming Boxing Gloves', 'นวมมวยไทยเพลิงลุกโชน', 'Weapon'),
+(7202, 72, 50.00, 60.00, 'Muay Thai Shorts', 'กางเกงมวยไทยศึกประจัญ', 'Attire'),
+(7203, 72, 50.00, 15.00, 'Mongkhon Headband', 'มงคลสวมศีรษะนักมวย', 'Accessories'),
+(7204, 72, 78.00, 40.00, 'Fireball Punch', 'หมัดพลังหมัดเพลิงทำลายล้าง', 'Magic/Skills'),
+(7205, 72, 35.00, 55.00, 'Bandaged Wraps', 'ผ้าพันข้อมือและข้อเท้า', 'Armor'),
+-- Hero 73: Riktor
+(7301, 73, 25.00, 45.00, 'Adaptor Sword', 'ดาบแปรสภาพธาตุสามสัณฐาน', 'Weapon'),
+(7302, 73, 50.00, 40.00, 'Hunter Coat', 'เสื้อโค้ตยาวนักล่าปีศาจ', 'Attire'),
+(7303, 73, 70.00, 50.00, 'Rune Scabbard', 'ฝักดาบสลักอักขระเวท', 'Accessories'),
+(7304, 73, 50.00, 25.00, 'Hunter Medallion', 'เหรียญตราสมาคมนักล่า', 'Accessories'),
+(7305, 73, 78.00, 35.00, 'Elemental Aura', 'ออร่าประสานธาตุหญ้า/น้ำ/บก', 'Magic/Skills'),
+-- Hero 74: Rouie
+(7401, 74, 25.00, 45.00, 'Cosmic Staff', 'คทาดาราจักรเชื่อมมิติ', 'Weapon'),
+(7402, 74, 75.00, 65.00, 'Teleportation Circle', 'วงแหวนวาปวาร์ปกลับบ้าน', 'Magic/Skills'),
+(7403, 74, 50.00, 40.00, 'Constellation Veil', 'ผ้าคลุมลายกลุ่มดาวฤกษ์', 'Attire'),
+(7404, 74, 50.00, 15.00, 'Astral Halo', 'รัศมีดวงดาวบนศีรษะ', 'Accessories'),
+(7405, 74, 75.00, 35.00, 'Starlight Orbs', 'ลูกแก้วแสงดาวนำทาง', 'Accessories'),
+-- Hero 75: Rourke
+(7501, 75, 25.00, 48.00, 'Crossbow Gun', 'หน้าไม้กลยิงกระจายกระสุน', 'Weapon'),
+(7502, 75, 72.00, 42.00, 'Mechanical Arm', 'แขนกลเหล็กกล้าทรงพลัง', 'Armor'),
+(7503, 75, 50.00, 38.00, 'Leather Vest', 'เสื้อกั๊กหนังนายพราน', 'Attire'),
+(7504, 75, 78.00, 60.00, 'Iron Will Shield', 'โล่บาเรียเกราะพลังใจเหล็ก', 'Magic/Skills'),
+(7505, 75, 50.00, 16.00, 'Commander Cap', 'หมวกแก๊ปผู้การกองกำลัง', 'Accessories'),
+-- Hero 76: Roxie
+(7601, 76, 25.00, 45.00, 'Fire Pickaxe', 'อีเต้อขุดเหมืองเพลิง', 'Weapon'),
+(7602, 76, 75.00, 35.00, 'Agnie Spirit', 'วิญญาณเพลิงน้อยแอกนี่', 'Magic/Skills'),
+(7603, 76, 50.00, 45.00, 'Miner Overalls', 'ชุดเอี๊ยมยีนส์คนงานเหมือง', 'Attire'),
+(7604, 76, 50.00, 82.00, 'Roller Skates', 'รองเท้าโรลเลอร์สเก็ตเพลิง', 'Attire'),
+(7605, 76, 78.00, 60.00, 'Flaming Lasso', 'บ่วงบาศเพลิงกระชากตัว', 'Magic/Skills'),
+-- Hero 77: Ryoma
+(7701, 77, 25.00, 45.00, 'Naginata Spear', 'หอกยาวนางินาตะซามูไร', 'Weapon'),
+(7702, 77, 50.00, 16.00, 'Straw Hat', 'หมวกฟางพเนจรโบราณ', 'Accessories'),
+(7703, 77, 50.00, 40.00, 'Ronin Haori', 'เสื้อคลุมฮาโอริซามูไรไร้นาย', 'Attire'),
+(7704, 77, 78.00, 45.00, 'Shadowless Flurry', 'เพลงหอกกระหน่ำแทงไร้เงา', 'Magic/Skills'),
+(7705, 77, 48.00, 82.00, 'Bamboo Sandals', 'รองเท้าสานไม้ไผ่โบราณ', 'Attire'),
+-- Hero 78: Sephera
+(7801, 78, 25.00, 45.00, 'Water Harp', 'พิณวารีแห่งสายน้ำศักดิ์สิทธิ์', 'Weapon'),
+(7802, 78, 50.00, 42.00, 'Mermaid Veil', 'ส่าหรีนางเงือกพลิ้วไหว', 'Attire'),
+(7803, 78, 50.00, 16.00, 'Aquatic Diadem', 'รัดเกล้าไข่มุกสมุทร', 'Accessories'),
+(7804, 78, 78.00, 55.00, 'Healing Rapids', 'ลำธารกระแสน้ำรักษาชีพ', 'Magic/Skills'),
+(7805, 78, 50.00, 65.00, 'Silk Dress', 'ชุดกระโปรงผ้าไหมเกล็ดปลา', 'Attire'),
+-- Hero 79: Sinestrea
+(7901, 79, 25.00, 48.00, 'Blood Blades', 'ใบมีดโลหิตแฝดสยบมาร', 'Weapon'),
+(7902, 79, 50.00, 40.00, 'Slumber Pyjamas', 'ชุดนอนสายเดี่ยวสีชาด', 'Attire'),
+(7903, 79, 78.00, 35.00, 'Blood Hibernation', 'พิธีกรรมนิทราโลหิตฟื้นกาย', 'Magic/Skills'),
+(7904, 79, 50.00, 16.00, 'Hair Ribbon', 'ริบบิ้นผูกผมสีแดงสด', 'Accessories'),
+(7905, 79, 48.00, 85.00, 'Barefoot Anklet', 'กำไลข้อเท้าเงินโบราณ', 'Accessories'),
+-- Hero 80: Skud
+(8001, 80, 25.00, 45.00, 'Hydraulic Fists', 'หมัดเหล็กไฮดรอลิกไอน้ำ', 'Weapon'),
+(8002, 80, 75.00, 35.00, 'Steam Boiler', 'หม้อต้มไอน้ำพลังงานสูง', 'Armor'),
+(8003, 80, 50.00, 40.00, 'Mechanical Plate', 'เกราะแผ่นกลไกฟันเฟือง', 'Armor'),
+(8004, 80, 78.00, 60.00, 'Release Valve', 'วาล์วระบายแรงดันไอน้ำ', 'Magic/Skills'),
+(8005, 80, 48.00, 82.00, 'Tread Greaves', 'สนับแข้งเกราะตีนตะขาบ', 'Armor'),
+-- Hero 81: Slimz
+(8101, 81, 25.00, 45.00, 'Flying Spear', 'หอกบินอาบยาชาทะลวงร่าง', 'Weapon'),
+(8102, 81, 75.00, 40.00, 'Merchant Backpack', 'เป้สัมภาระพ่อค้าเร่', 'Accessories'),
+(8103, 81, 50.00, 16.00, 'Miner Goggles', 'แว่นตานิรภัยคนขุดเหมือง', 'Accessories'),
+(8104, 81, 50.00, 12.00, 'Rabbit Ears', 'หูกระต่ายสัญชาตญาณไว', 'Accessories'),
+(8105, 81, 50.00, 70.00, 'Swift Hop', 'การกระโดดคล่องแคล่วว่องไว', 'Magic/Skills'),
+-- Hero 82: Superman
+(8201, 82, 25.00, 30.00, 'Red Cape', 'ผ้าคลุมแดงโบกสะบัด', 'Attire'),
+(8202, 82, 50.00, 35.00, 'House of El Shield', 'ตราสัญลักษณ์ตระกูลเอลตัว S', 'Attire'),
+(8203, 82, 50.00, 16.00, 'Heat Vision', 'ลำแสงความร้อนจากดวงตา', 'Magic/Skills'),
+(8204, 82, 50.00, 50.00, 'Kryptonian Bodysuit', 'ชุดบอดี้สูทชาวคริปตัน', 'Attire'),
+(8205, 82, 75.00, 25.00, 'Freeze Breath', 'ลมหายใจเยือกแข็งแช่แข็ง', 'Magic/Skills'),
+(8206, 82, 48.00, 85.00, 'Combat Boots', 'รองเท้าบูทสีแดงบินทะยาน', 'Attire'),
+-- Hero 83: Taara
+(8301, 83, 25.00, 45.00, 'War Hammer', 'ค้อนศึกเหล็กกล้ายักษ์', 'Weapon'),
+(8302, 83, 50.00, 35.00, 'Steel Cuirass', 'เกราะอกเหล็กกล้านักรบสาว', 'Armor'),
+(8303, 83, 75.00, 45.00, 'Berserker Regeneration', 'พลังฟื้นฟูชีพคลั่งศึก', 'Magic/Skills'),
+(8304, 83, 72.00, 26.00, 'Spiked Pauldron', 'เกราะไหล่เหล็กปลายหนาม', 'Armor'),
+(8305, 83, 48.00, 80.00, 'Armored Greaves', 'สนับแข้งเหล็กป้องกันแรงกระแทก', 'Armor'),
+-- Hero 84: Tachi
+(8401, 84, 25.00, 45.00, 'Cliff Blade', 'ดาบผ่าศิลาฟันสะบั้น', 'Weapon'),
+(8402, 84, 50.00, 40.00, 'Ronin Robes', 'เสื้อคลุมนักดาบพเนจร', 'Attire'),
+(8403, 84, 78.00, 35.00, 'Seal Breaking Mark', 'ตราปลดผนึกดาบสี่ทิศ', 'Magic/Skills'),
+(8404, 84, 70.00, 50.00, 'Armored Vambraces', 'สนับแขนเหล็กกล้าซามูไร', 'Armor'),
+(8405, 84, 40.00, 25.00, 'Straw Cloak', 'เสื้อคลุมฟางกันพายุฝน', 'Attire'),
+-- Hero 85: TeeMee
+(8501, 85, 25.00, 45.00, 'Poot Spear', 'หอกจิ๋วคู่ใจนักรบคู่หู', 'Weapon'),
+(8502, 85, 50.00, 40.00, 'Golden Armor Suit', 'ชุดเกราะทองคำตัวยักษ์', 'Armor'),
+(8503, 85, 75.00, 65.00, 'Holy Grail', 'จอกศักดิ์สิทธิ์คืนชีพวิญญาณ', 'Magic/Skills'),
+(8504, 85, 50.00, 16.00, 'Knight Helmet', 'หมวกเกราะอัศวินทองคำ', 'Armor'),
+(8505, 85, 70.00, 45.00, 'Alchemy Bag', 'ถุงกระเป๋าสูตรเล่นแร่แปรธาตุ', 'Accessories'),
+-- Hero 86: Teeri
+(8601, 86, 25.00, 45.00, 'Dual Circular Blades', 'กงจักรคู่ล่าสังหารสองมือ', 'Weapon'),
+(8602, 86, 50.00, 40.00, 'Investigator Uniform', 'เครื่องแบบนักสืบสาวรุ่นเยาว์', 'Attire'),
+(8603, 86, 50.00, 15.00, 'Feathered Beret', 'หมวกเบเร่ต์ประดับขนนก', 'Accessories'),
+(8604, 86, 75.00, 35.00, 'Tracking Scope', 'กล้องเล็งวิเคราะห์แกะรอย', 'Magic/Skills'),
+(8605, 86, 48.00, 82.00, 'Swift Boots', 'รองเท้าบูทสืบคดีคล่องตัว', 'Attire'),
+-- Hero 87: Tel'Annas
+(8701, 87, 25.00, 45.00, 'Bow of the Stars', 'คันธนูประกายดาราแห่งเอลฟ์', 'Weapon'),
+(8702, 87, 50.00, 15.00, 'Elven Tiara', 'รัดเกล้ามงกุฎราชินีเอลฟ์', 'Accessories'),
+(8703, 87, 50.00, 42.00, 'Regal Gown', 'ชุดราตรีราชินีพงไพร', 'Attire'),
+(8704, 87, 78.00, 35.00, 'Starlight Arrow', 'ศรประกายแสงดวงดาว', 'Magic/Skills'),
+(8705, 87, 70.00, 50.00, 'Quiver of Eternity', 'ซองลูกศรอมตะนิรันดร์กาล', 'Accessories'),
+-- Hero 88: The Flash
+(8801, 88, 50.00, 15.00, 'Crimson Cowl', 'หน้ากากฮู้ดสีแดงสายฟ้า', 'Attire'),
+(8802, 88, 50.00, 35.00, 'Lightning Emblem', 'ตราสัญลักษณ์สายฟ้าทองคำ', 'Attire'),
+(8803, 88, 50.00, 48.00, 'Friction Suit', 'ชุดบอดี้สูททนแรงเสียดทาน', 'Attire'),
+(8804, 88, 75.00, 40.00, 'Speed Force Lightning', 'ประกายสายฟ้าสปีดฟอร์ซ', 'Magic/Skills'),
+(8805, 88, 48.00, 85.00, 'Gold Boots', 'รองเท้าบูททองคำความเร็วสูง', 'Attire'),
+(8806, 88, 25.00, 45.00, 'Mach Punch', 'หมัดทะลวงกำแพงเสียงมัค', 'Magic/Skills'),
+-- Hero 89: Thorne
+(8901, 89, 25.00, 48.00, 'Magic Revolver', 'ปืนลูกโม่มนตรากระสุนเวท', 'Weapon'),
+(8902, 89, 50.00, 38.00, 'Scholar Cape', 'เสื้อคลุมนักวิชาการเวทมนตร์', 'Attire'),
+(8903, 89, 75.00, 45.00, 'Bullet Cylinder', 'รังเพลิงบรรจุกระสุนเวทมนตร์', 'Accessories'),
+(8904, 89, 50.00, 16.00, 'Monocle', 'แว่นตาเลนส์เดียวส่องวิเคราะห์', 'Accessories'),
+(8905, 89, 48.00, 82.00, 'Leather Boots', 'รองเท้าบูทหนังนักค้นคว้า', 'Attire'),
+-- Hero 90: Toro
+(9001, 90, 25.00, 45.00, 'Iron Armguards', 'สนับแขนเหล็กกล้ากระทิงดุ', 'Weapon'),
+(9002, 90, 50.00, 15.00, 'Bull Horns', 'เขาคู่กระทิงยักษ์สะท้านปฐพี', 'Armor'),
+(9003, 90, 50.00, 22.00, 'Nose Ring', 'ห่วงคล้องจมูกทองเหลือง', 'Accessories'),
+(9004, 90, 50.00, 42.00, 'Bull Armor', 'ชุดเกราะเหล็กอสูรกระทิง', 'Armor'),
+(9005, 90, 75.00, 65.00, 'Earth Quake Stomp', 'กระทืบพื้นสะเทือนแผ่นดินไหว', 'Magic/Skills'),
+-- Hero 91: Tulen
+(9101, 91, 25.00, 35.00, 'Thunder Orbs', 'ลูกแก้วสายฟ้าสวรรค์ลอยรอบกาย', 'Magic/Skills'),
+(9102, 91, 50.00, 40.00, 'High Priest Robes', 'เสื้อคลุมมหาปุโรหิตวิหารเทพ', 'Attire'),
+(9103, 91, 50.00, 15.00, 'Lightning Crown', 'มงกุฎสายฟ้าอสนีบาต', 'Accessories'),
+(9104, 91, 75.00, 35.00, 'Winged Cloak', 'ผ้าคลุมมีปีกสัญลักษณ์สายฟ้า', 'Attire'),
+(9105, 91, 78.00, 60.00, 'Ionized Beam', 'ลำแสงนกสายฟ้ายิงทะลวง', 'Magic/Skills'),
+-- Hero 92: Valhein
+(9201, 92, 25.00, 45.00, 'Silver Revolver', 'ปืนลูกโม่เงินกำราบปีศาจ', 'Weapon'),
+(9202, 92, 75.00, 45.00, 'Hunter Glaive', 'กงจักรใบมีดนักล่าแวมไพร์', 'Weapon'),
+(9203, 92, 50.00, 15.00, 'Hunter Hat', 'หมวกปีกกว้างนักล่าปีศาจ', 'Accessories'),
+(9204, 92, 50.00, 40.00, 'Leather Trenchcoat', 'เสื้อเทรนช์โค้ตหนังล่าอสูร', 'Attire'),
+(9205, 92, 40.00, 32.00, 'Bullet Bandolier', 'สายสะพายกระสุนเงิน', 'Accessories'),
+(9206, 92, 78.00, 65.00, 'Bullet Storm', 'พายุระดมยิงกระสุนเวทมนตร์', 'Magic/Skills'),
+-- Hero 93: Veera
+(9301, 93, 20.00, 30.00, 'Bat Wings', 'ปีกค้างคาวปีศาจราคะ', 'Accessories'),
+(9302, 93, 50.00, 42.00, 'Succubus Corset', 'คอร์เซ็ตซัคคิวบัสสุดเซ็กซี่', 'Attire'),
+(9303, 93, 50.00, 15.00, 'Demon Horns', 'เขาคู่ปีศาจน้อยน่าหลงใหล', 'Accessories'),
+(9304, 93, 75.00, 35.00, 'Kiss of Death', 'จุมพิตมรณะสตันตรึงวิญญาณ', 'Magic/Skills'),
+(9305, 93, 78.00, 60.00, 'Bats Swarm', 'ฝูงค้างคาววิญญาณสาดส่อง', 'Magic/Skills'),
+-- Hero 94: Veres
+(9401, 94, 25.00, 48.00, 'Chain Whip', 'แส้โซ่ใบมีดสะบัดสังหาร', 'Weapon'),
+(9402, 94, 50.00, 40.00, 'Executioner Tunic', 'ชุดทูนิคเพชฌฆาตสาวสีแดง', 'Attire'),
+(9403, 94, 75.00, 30.00, 'Sigil Rings', 'วงแหวนอักขระเวทสี่วง', 'Accessories'),
+(9404, 94, 78.00, 55.00, 'Blood Thirst Aura', 'ออร่ากระหายเลือดปลดปล่อยพลัง', 'Magic/Skills'),
+(9405, 94, 48.00, 82.00, 'Heel Greaves', 'สนับส้นรองเท้าเกราะเหล็ก', 'Armor'),
+-- Hero 95: Violet (Classic)
+(9501, 95, 80.00, 55.00, 'Handgun', 'ปืนพกสั้นคลาสสิก', 'Weapon'),
+(9502, 95, 20.00, 45.00, 'Heavy Bazooka', 'ปืนใหญ่บาซูก้ากระหน่ำยิง', 'Weapon'),
+(9503, 95, 50.00, 25.00, 'Yellow Scarf', 'ผ้าพันคอสีเหลืองสดใส', 'Accessories'),
+(9504, 95, 50.00, 45.00, 'Leather Holster', 'ซองปืนหนังคาดเอว', 'Accessories'),
+(9505, 95, 35.00, 85.00, 'Field Boots', 'รองเท้าบูทเดินสนามรบ', 'Attire'),
+(9506, 95, 65.00, 30.00, 'Rolling Shot', 'ท่ากลิ้งยิงทรงพลัง', 'Magic/Skills'),
+-- Hero 96: Volkath
+(9601, 96, 25.00, 45.00, 'Dark Greatsword', 'ดาบยักษ์ความมืดกลืนกิน', 'Weapon'),
+(9602, 96, 50.00, 65.00, 'Nightmare Steed', 'ม้าศึกฝันร้ายแห่งขุมนรก', 'Magic/Skills'),
+(9603, 96, 50.00, 38.00, 'Dark Iron Armor', 'ชุดเกราะเหล็กทมิฬแห่งความตาย', 'Armor'),
+(9604, 96, 50.00, 16.00, 'Spiked Crown Helm', 'หมวกเกราะมงกุฎหนามจอมมาร', 'Armor'),
+(9605, 96, 78.00, 35.00, 'Undying Fury', 'ความโกรธแค้นอมตะคืนชีพ', 'Magic/Skills'),
+-- Hero 97: Wiro
+(9701, 97, 25.00, 45.00, 'Sacred Battle Axe', 'ขวานศึกศักดิ์สิทธิ์เบิกปฐพี', 'Weapon'),
+(9702, 97, 72.00, 35.00, 'Invulnerability Talisman', 'เครื่องรางคุ้มกายคงกระพัน', 'Accessories'),
+(9703, 97, 50.00, 40.00, 'Warrior Tunic', 'ชุดทูนิคนักรบชนพื้นเมือง', 'Attire'),
+(9704, 97, 50.00, 16.00, 'Martial Headband', 'ผ้าคาดผมศิลาศักดิ์สิทธิ์', 'Accessories'),
+(9705, 97, 75.00, 65.00, 'Earth Shatter', 'ท่าฟาดขวานแผ่นดินแยก', 'Magic/Skills'),
+-- Hero 98: Wisp
+(9801, 98, 50.00, 55.00, 'War Machine Mech', 'หุ่นยนต์จักรกลสงครามสองขา', 'Weapon'),
+(9802, 98, 25.00, 35.00, 'Rocket Launchers', 'ท่อยิงจรวดมิสไซล์คู่', 'Weapon'),
+(9803, 98, 50.00, 16.00, 'Aviator Helmet', 'หมวกนักบินเกราะกลม', 'Accessories'),
+(9804, 98, 50.00, 38.00, 'Armored Cockpit', 'ห้องควบคุมหุ่นยนต์เกราะหนา', 'Armor'),
+(9805, 98, 78.00, 65.00, 'Barrel Roll', 'การกลิ้งหลบระเบิดทิ้งบอมบ์', 'Magic/Skills'),
+-- Hero 99: Wonder Woman
+(9901, 99, 25.00, 45.00, 'Sword of Athena', 'ดาบแห่งเทพีเอธีนา', 'Weapon'),
+(9902, 99, 75.00, 45.00, 'Amazonian Shield', 'โล่เกราะเผ่านักรบอเมซอน', 'Armor'),
+(9903, 99, 70.00, 60.00, 'Lasso of Truth', 'บ่วงบาศก์แห่งความจริง', 'Magic/Skills'),
+(9904, 99, 35.00, 55.00, 'Bracelets of Submission', 'ปลอกแขนสะท้อนกระสุน', 'Armor'),
+(9905, 99, 50.00, 15.00, 'Golden Tiara', 'มงกุฎรัดเกล้าทองคำดาวแดง', 'Accessories'),
+(9906, 99, 50.00, 38.00, 'Eagle Corset', 'ชุดเกราะรัดรูปตราอินทรีทอง', 'Attire'),
+-- Hero 100: Wukong
+(10001, 100, 25.00, 45.00, 'Ruyi Jingu Bang', 'กระบองสารพัดนึกหงอคง', 'Weapon'),
+(10002, 100, 50.00, 15.00, 'Golden Circlet', 'รัดเกล้าทองคำกำราบใจ', 'Accessories'),
+(10003, 100, 50.00, 40.00, 'Battle Robes', 'เสื้อเกราะผ้ารัดกุมเห้งเจีย', 'Armor'),
+(10004, 100, 75.00, 35.00, 'Cloud Somersault', 'เมฆหมอกเหาะตีลังกา', 'Magic/Skills'),
+(10005, 100, 72.00, 65.00, 'Monkey Tail', 'หางวานรทรงตัวคล่องแคล่ว', 'Accessories'),
+-- Hero 101: Xeniel
+(10101, 101, 25.00, 45.00, 'Holy Flail', 'ลูกตุ้มหนามศักดิ์สิทธิ์', 'Weapon'),
+(10102, 101, 78.00, 25.00, 'Seraphic Wings', 'หกปีกเทพผู้ส่งสาส์นสวรรค์', 'Accessories'),
+(10103, 101, 50.00, 38.00, 'Archangel Plate', 'ชุดเกราะเทวทูตอัครเสนา', 'Armor'),
+(10104, 101, 50.00, 65.00, 'Celestial Intervention', 'วาร์ปเหินเวหาคุ้มกันสหาย', 'Magic/Skills'),
+(10105, 101, 32.00, 55.00, 'Book of Prayers', 'คัมภีร์บทสวดพิทักษ์ชีพ', 'Accessories'),
+-- Hero 102: Yan
+(10201, 102, 25.00, 45.00, 'Brush-Blade', 'พู่กันกระบี่จิตรกรสะบัดหมึก', 'Weapon'),
+(10202, 102, 75.00, 45.00, 'Ink Scroll', 'ม้วนคัมภีร์หมึกภาพวาดโบราณ', 'Accessories'),
+(10203, 102, 50.00, 40.00, 'Scholar Hanfu', 'ชุดฮั่นฝูบัณฑิตหนุ่มพริ้วไหว', 'Attire'),
+(10204, 102, 78.00, 65.00, 'Ink Mountain Barrier', 'ม่านหมึกขุนเขากำแพงป้องกัน', 'Magic/Skills'),
+(10205, 102, 50.00, 58.00, 'Jade Pendant', 'จี้หยกห้อยเอวนำโชค', 'Accessories'),
+-- Hero 103: Y'bneth
+(10301, 103, 25.00, 45.00, 'Tree Branches', 'กิ่งก้านต้นไม้ยักษ์บรรพกาล', 'Weapon'),
+(10302, 103, 50.00, 40.00, 'Bark Armor', 'เปลือกไม้หนาเกราะพงไพร', 'Armor'),
+(10303, 103, 75.00, 35.00, 'Seed Pods', 'ฝักเมล็ดพันธุ์ระเบิดพืช', 'Magic/Skills'),
+(10304, 103, 50.00, 70.00, 'Root Vines', 'เถาวัลย์รากไม้ดึงตวัด', 'Magic/Skills'),
+(10305, 103, 50.00, 15.00, 'Leaf Crown', 'มงกุฎใบไม้เขียวขจี', 'Accessories'),
+-- Hero 104: Yorn
+(10401, 104, 25.00, 45.00, 'Bow of Apollo', 'คันธนูสุริยันอพอลโล', 'Weapon'),
+(10402, 104, 70.00, 50.00, 'Sunfire Quiver', 'ซองลูกศรเปลวสุริยัน', 'Accessories'),
+(10403, 104, 50.00, 38.00, 'Archer Armor', 'เกราะอกนักธนูแสงสว่าง', 'Armor'),
+(10404, 104, 78.00, 30.00, 'Heart of the Sun', 'ศรสุริยะยิงข้ามแมพ', 'Magic/Skills'),
+(10405, 104, 50.00, 15.00, 'Golden Circlet', 'มงกุฎรัดเกล้าทองคำบุตรแห่งดวงอาทิตย์', 'Accessories'),
+(10406, 104, 35.00, 55.00, 'Archer Gauntlet', 'ถุงมือหนังเหนี่ยวสายธนู', 'Armor'),
+-- Hero 105: Yue
+(10501, 105, 25.00, 45.00, 'Jade Folding Fan', 'พัดพับหยกคมกริบสังหาร', 'Weapon'),
+(10502, 105, 50.00, 42.00, 'Princess Gown', 'ชุดราตรีองค์หญิงผ้าไหมชั้นสูง', 'Attire'),
+(10503, 105, 50.00, 15.00, 'Phoenix Hairpin', 'ปิ่นปักผมหงส์ทองคำโบราณ', 'Accessories'),
+(10504, 105, 78.00, 35.00, 'Cross Fan Blades', 'พัดคมมีดไขว้ตัดมิติ', 'Magic/Skills'),
+(10505, 105, 50.00, 65.00, 'Ribbon Sashes', 'แพรแถบคาดเอวลอยละล่อง', 'Attire'),
+-- Hero 106: Zanis
+(10601, 106, 25.00, 45.00, 'Dragon Spear', 'ทวนมังกรศึกสะท้านแดน', 'Weapon'),
+(10602, 106, 50.00, 38.00, 'Dragon Scale Armor', 'ชุดเกราะเกล็ดมังกรขาว', 'Armor'),
+(10603, 106, 50.00, 16.00, 'White War Mask', 'หน้ากากสงครามขาวขุนศึก', 'Accessories'),
+(10604, 106, 78.00, 55.00, 'Dragon Blood Strike', 'เพลงทวนกระหน่ำแทงเลือดมังกร', 'Magic/Skills'),
+(10605, 106, 48.00, 80.00, 'Plated Greaves', 'สนับแข้งเกราะเหล็กแผ่น', 'Armor'),
+-- Hero 107: Zata
+(10701, 107, 25.00, 45.00, 'Feather Darts', 'ขนนกเวทมนตร์คมดั่งมีดบิน', 'Weapon'),
+(10702, 107, 78.00, 25.00, 'Avian Wings', 'ปีกปักษาทมิฬโผบิน', 'Accessories'),
+(10703, 107, 50.00, 40.00, 'Courier Coat', 'เสื้อโค้ตนกส่งสารแห่งเงา', 'Attire'),
+(10704, 107, 50.00, 70.00, 'Ascending Gale', 'ทะยานฟ้ากระหน่ำยิงขนนก', 'Magic/Skills'),
+(10705, 107, 50.00, 16.00, 'Feather Crown', 'มงกุฎขนนกเหยี่ยวทมิฬ', 'Accessories'),
+-- Hero 108: Zephys
+(10801, 108, 25.00, 45.00, 'Dual Spears', 'ทวนคู่ยมทูตพิฆาตวิญญาณ', 'Weapon'),
+(10802, 108, 50.00, 38.00, 'Vanguard Armor', 'เกราะเหล็กกองหน้าผู้กล้า', 'Armor'),
+(10803, 108, 50.00, 16.00, 'Knight Helm', 'หมวกเกราะอัศวินแห่งความตาย', 'Armor'),
+(10804, 108, 78.00, 55.00, 'Death from Above', 'ท่าพุ่งกระแทกมรณะจากฟ้า', 'Magic/Skills'),
+(10805, 108, 50.00, 65.00, 'Unyielding Soul', 'จิตวิญญาณแกร่งยิ่งเจ็บยิ่งอึด', 'Magic/Skills'),
+-- Hero 109: Zill
+(10901, 109, 25.00, 45.00, 'Wind Scythes', 'เคียวคู่วายุหมุนปลิดชีพ', 'Weapon'),
+(10902, 109, 50.00, 45.00, 'Cyclone Body', 'ลำตัวสายลมพายุหมุนวน', 'Attire'),
+(10903, 109, 50.00, 16.00, 'Storm Mask', 'หน้ากากพายุอสูรวายุ', 'Accessories'),
+(10904, 109, 78.00, 35.00, 'Tempest Tornado', 'พายุทอร์นาโดกระหน่ำฟัน', 'Magic/Skills'),
+(10905, 109, 50.00, 70.00, 'Wind Shroud', 'ม่านไอหมอกวายุคุ้มกัน', 'Magic/Skills'),
+-- Hero 110: Zip
+(11001, 110, 50.00, 50.00, 'Inflatable Belly', 'พุงกลมโตกลืนเพื่อนกลืนครีป', 'Magic/Skills'),
+(11002, 110, 50.00, 16.00, 'Demon Horns', 'เขาน้อยปีศาจป่วนกวนใจ', 'Accessories'),
+(11003, 110, 78.00, 25.00, 'Bat Wings', 'ปีกค้างคาวจิ๋วบินดุ๊กดิ๊ก', 'Accessories'),
+(11004, 110, 75.00, 65.00, 'Rolling Shield', 'โล่กลิ้งทับป้องกันความเสียหาย', 'Magic/Skills'),
+(11005, 110, 22.00, 60.00, 'Demon Tail', 'หางปีศาจน้อยน่ารัก', 'Accessories'),
+-- Hero 111: Zuka
+(11101, 111, 25.00, 45.00, 'Bo-Staff', 'ไม้พลองไผ่ปรมาจารย์กังฟู', 'Weapon'),
+(11102, 111, 50.00, 16.00, 'Bamboo Hat', 'หมวกงอบสานไม้ไผ่โบราณ', 'Accessories'),
+(11103, 111, 50.00, 42.00, 'Martial Artist Vest', 'เสื้อกั๊กจอมยุทธ์แพนด้า', 'Attire'),
+(11104, 111, 72.00, 55.00, 'Wine Gourd', 'น้ำเต้าสุราเซียนห้อยเอว', 'Accessories'),
+(11105, 111, 78.00, 70.00, 'Mountain Weight', 'ท่าทับก้นกระแทกภูผา', 'Magic/Skills');

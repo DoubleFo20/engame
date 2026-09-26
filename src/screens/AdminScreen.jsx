@@ -1078,10 +1078,6 @@ function ActivityLogsTab() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadLogs();
-  }, []);
-
   const loadLogs = async () => {
     setLoading(true);
     try {
@@ -1097,6 +1093,10 @@ function ActivityLogsTab() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadLogs();
+  }, []);
 
   const getActionBadge = (action) => {
     const map = {
